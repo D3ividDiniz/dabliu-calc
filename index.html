@@ -123,14 +123,14 @@
                 isEntering: true,
                 prefix: null, // 'f', 'g'
                 registers: { n: null, i: null, PV: null, PMT: null, FV: null },
-                pythagoras: { c1: null, c2: null, h: null, count: 0},
+                pythagoras: { c1: null, c2: null, h: null },
                 config: { decimalPlaces: 2 }
             };
         };
         
         const helpers = {
             factorial: (num) => {
-                if (num < 0 || num % 1 !== 0) return NaN; // Factorial is for non-negative integers
+                if (num < 0 || num % 1 !== 0) return NaN;
                 if (num === 0 || num === 1) return 1;
                 let result = 1;
                 for (let i = 2; i <= num; i++) {
@@ -145,14 +145,14 @@
                 const valueStr = state.isEntering ? state.inputBuffer : String(state.stack[0]);
                 const numValue = parseFloat(valueStr.replace(',', '.'));
 
-                if (isNaN(numValue)) {
+                if (isNaN(numValue) || !isFinite(numValue)) {
                     dom.displayMain.textContent = "Error";
                     return;
                 }
 
                 let formattedValue;
                 if (Math.abs(numValue) > 9999999999 || (Math.abs(numValue) < 0.000000001 && numValue !== 0)) {
-                    formattedValue = numValue.toExponential(state.config.decimalPlaces);
+                    formattedValue = numValue.toExponential(state.config.decimalPlaces > 6 ? 6 : state.config.decimalPlaces);
                 } else {
                     formattedValue = numValue.toFixed(state.config.decimalPlaces);
                 }
@@ -168,28 +168,25 @@
                 dom.displayContext.innerHTML = contextStr || '&nbsp;';
             },
             flashMessage: (msg, duration = 1500) => {
-                const originalText = dom.displayMain.textContent;
-                dom.displayMain.textContent = msg;
+                const originalContext = dom.displayContext.innerHTML;
+                dom.displayContext.innerHTML = `<span style="color: var(--hp-blue);">${msg}</span>`;
                 setTimeout(() => {
-                    dom.displayMain.textContent = originalText;
-                    display.update();
+                    dom.displayContext.innerHTML = originalContext;
+                    display.updateContext();
                 }, duration);
             }
         };
 
         const rpn = {
             push: (value) => {
-                if (isNaN(value)) { 
-                    display.flashMessage("Error");
-                    value = 0; 
-                }
+                let cleanValue = isNaN(value) || !isFinite(value) ? 0 : value;
                 state.lastX = state.stack[0];
-                state.stack.unshift(value);
+                state.stack.unshift(cleanValue);
                 state.stack.pop();
             },
             pop: () => {
                 const x = state.stack.shift();
-                state.stack.push(state.stack[2]); // T replicates
+                state.stack.push(state.stack[2]);
                 return x;
             },
             enter: () => {
@@ -197,7 +194,7 @@
                     rpn.push(parseFloat(state.inputBuffer.replace(',', '.')));
                     state.isEntering = false;
                 } else {
-                    rpn.push(state.stack[0]); // Duplicate X
+                    rpn.push(state.stack[0]);
                 }
             },
             binaryOp: (op) => {
@@ -214,56 +211,40 @@
         };
 
         const engine = {
-            tvm: (key) => {
-                const { n, i, PV, PMT, FV } = state.registers;
-                const i_dec = (i || 0) / 100;
-                let result = NaN;
-
+            tvm: (keyToCalc) => {
+                const regs = state.registers;
+                const n = regs.n, i = regs.i, PV = regs.PV, PMT = regs.PMT, FV = regs.FV;
+                
                 try {
-                    switch(key) {
-                        case 'FV': result = -(PV * Math.pow(1 + i_dec, n) + (PMT || 0) * ((Math.pow(1 + i_dec, n) - 1) / i_dec)); break;
-                        case 'PV': result = -(FV / Math.pow(1 + i_dec, n) + (PMT || 0) * ((1 - Math.pow(1 + i_dec, -n)) / i_dec)); break;
-                        case 'n': result = Math.log((-FV + (PMT/i_dec)) / (PV + (PMT/i_dec))) / Math.log(1 + i_dec); break;
-                        case 'i': // Simplified; a real one needs an iterative solver
-                           result = (Math.pow(FV / -PV, 1/n) - 1) * 100;
-                           if (isNaN(result)) display.flashMessage("Needs PV/FV");
-                           break;
-                        case 'PMT': result = -(PV + FV / Math.pow(1 + i_dec, n)) * (i_dec / (1 - Math.pow(1 + i_dec, -n))); break;
-                    }
-                } catch (e) {
-                    display.flashMessage("Calc Error");
-                    return;
-                }
-                
-                if (isNaN(result)) {
-                   const filledCount = Object.values(state.registers).filter(v => v !== null).length;
-                   display.flashMessage(`${4 - filledCount} more`);
-                } else {
-                    rpn.push(result);
-                }
-            },
-            pythagoras: (key) => {
-                const p = state.pythagoras;
-                if(state.isEntering) rpn.enter();
-                
-                p[key] = state.stack[0];
-                p.count++;
-                display.flashMessage(`${key.toUpperCase()} set`);
+                    if (keyToCalc === 'i') {
+                        // Newton-Raphson solver for interest rate
+                        const fn = (rate) => (PV * Math.pow(1 + rate, n)) + (PMT * (Math.pow(1 + rate, n) - 1) / rate) + FV;
+                        let rate = (FV > 0 ? FV : 1) / (PV < 0 ? -PV : 1) / n; // Initial guess
+                        if (isNaN(rate) || !isFinite(rate)) rate = 0.05;
 
-                if (p.count >= 2) {
-                    let result = NaN;
-                    try {
-                        if (key === 'h' && p.c1 && p.c2) result = Math.sqrt(p.c1**2 + p.c2**2);
-                        else if (key === 'c1' && p.h && p.c2) result = Math.sqrt(p.h**2 - p.c2**2);
-                        else if (key === 'c2' && p.h && p.c1) result = Math.sqrt(p.h**2 - p.c1**2);
-                    } catch(e) { result = NaN; }
-                    
-                    if (!isNaN(result)) {
-                        rpn.push(result);
-                        p.c1 = p.c2 = p.h = null;
-                        p.count = 0;
+                        for (let k = 0; k < 30; k++) {
+                            const f_x = fn(rate);
+                            if (Math.abs(f_x) < 1e-9) break;
+                            const df_x = (fn(rate + 1e-6) - f_x) / 1e-6; // Numerical derivative
+                            rate = rate - f_x / df_x;
+                        }
+                        rpn.push(rate * 100);
+                    } else {
+                        const i_dec = i / 100;
+                        if (i_dec === 0) { // Handle zero interest case
+                            if (keyToCalc === 'FV') rpn.push(-(PV + PMT * n));
+                            else if (keyToCalc === 'PV') rpn.push(-(FV + PMT * n));
+                            else if (keyToCalc === 'PMT') rpn.push(-(PV + FV) / n);
+                            else rpn.push(NaN);
+                        } else {
+                            if (keyToCalc === 'n') rpn.push(Math.log((-FV + (PMT/i_dec)) / (PV + (PMT/i_dec))) / Math.log(1 + i_dec));
+                            else if (keyToCalc === 'FV') rpn.push(-(PV * Math.pow(1 + i_dec, n) + PMT * ((Math.pow(1 + i_dec, n) - 1) / i_dec)));
+                            else if (keyToCalc === 'PV') rpn.push(-(FV / Math.pow(1 + i_dec, n) + PMT * ((1 - Math.pow(1 + i_dec, -n)) / i_dec)));
+                            else if (keyToCalc === 'PMT') rpn.push(-(PV + FV / Math.pow(1 + i_dec, n)) * i_dec / (1 - Math.pow(1 + i_dec, -n)));
+                            else rpn.push(NaN);
+                        }
                     }
-                }
+                } catch (e) { rpn.push(NaN); }
             }
         };
 
@@ -272,65 +253,65 @@
                 const key = button.dataset.key;
                 const fKey = button.dataset.fKey;
                 const gKey = button.dataset.gKey;
-
-                if (state.prefix === 'f' && fKey) {
-                    handle.func(fKey);
-                    state.prefix = null;
-                } else if (state.prefix === 'g' && gKey) {
-                    handle.func(gKey);
-                    state.prefix = null;
+                
+                let funcToRun = key;
+                if (state.prefix === 'f' && fKey) funcToRun = fKey;
+                if (state.prefix === 'g' && gKey) funcToRun = gKey;
+                
+                if (state.prefix === 'f' && "0123456789".includes(key)) {
+                    state.config.decimalPlaces = parseInt(key);
+                    display.flashMessage(`FIX ${key}`);
                 } else {
-                    // Special case for f-prefix + number for setting decimal places
-                    if (state.prefix === 'f' && "0123456789".includes(key)) {
-                        state.config.decimalPlaces = parseInt(key);
-                        display.flashMessage(`FIX ${key}`);
-                        state.prefix = null;
-                    } else {
-                       handle.func(key);
-                    }
+                    handle.func(funcToRun);
                 }
+
+                if (state.prefix && (funcToRun === fKey || funcToRun === gKey)) {
+                    state.prefix = null;
+                }
+
                 display.update();
                 display.updateContext();
             },
             number: (digit) => {
                 if (!state.isEntering) {
-                    rpn.enter(); // Push X to Y
+                    rpn.enter();
                     state.inputBuffer = '0';
                     state.isEntering = true;
                 }
-                if (state.inputBuffer.length > 12) return;
                 if (digit === '.' && state.inputBuffer.includes(',')) return;
-                
+                if (state.inputBuffer.length > 15) return;
                 if (state.inputBuffer === '0' && digit !== '.') state.inputBuffer = '';
                 state.inputBuffer += (digit === '.' ? ',' : digit);
             },
+            backspace: () => {
+                if (state.isEntering) {
+                    state.inputBuffer = state.inputBuffer.slice(0, -1);
+                    if (state.inputBuffer === '' || state.inputBuffer === '-') state.inputBuffer = '0';
+                }
+            },
             func: (key) => {
-                const numericKeys = "0123456789.";
-                if (numericKeys.includes(key)) {
+                if ("0123456789.".includes(key)) {
                     handle.number(key);
                     return;
                 }
                 
-                if (state.isEntering && key !== 'Enter' && key !== 'CHS' && key !== 'CLx') {
-                    rpn.enter();
-                }
-                state.isEntering = false;
-
                 switch (key) {
                     // System & Stack
-                    case 'Enter': rpn.enter(); state.isEntering = false; break;
+                    case 'Enter': rpn.enter(); break;
                     case 'CHS':
-                        if(state.isEntering && state.inputBuffer !== '0') {
-                            state.inputBuffer = String(-parseFloat(state.inputBuffer.replace(',','.'))).replace('.',',');
-                        } else {
-                            rpn.unaryOp(x => -x);
-                        }
+                        if (state.isEntering) {
+                            if(state.inputBuffer.startsWith('-')) state.inputBuffer = state.inputBuffer.substring(1);
+                            else if (state.inputBuffer !== '0') state.inputBuffer = '-' + state.inputBuffer;
+                        } else rpn.unaryOp(x => -x);
                         break;
-                    case 'CLx': state.inputBuffer = '0'; state.isEntering = true; state.stack[0] = 0; break;
+                    case 'CLx':
+                        if (state.isEntering && state.inputBuffer !== '0') handle.backspace();
+                        else { state.stack[0] = 0; state.inputBuffer = '0'; state.isEntering = true; }
+                        break;
                     case 'AC': resetState(); break;
                     case 'f': case 'g': state.prefix = key; break;
                     
-                    // Basic Arithmetic
+                    // Arithmetic
                     case '+': rpn.binaryOp((y, x) => y + x); break;
                     case '-': rpn.binaryOp((y, x) => y - x); break;
                     case '*': rpn.binaryOp((y, x) => y * x); break;
@@ -345,70 +326,56 @@
                     case 'LOG':  rpn.binaryOp((y, x) => Math.log(y) / Math.log(x)); break;
                     case 'y_root_x': rpn.binaryOp((y, x) => Math.pow(y, 1/x)); break;
                     case 'n!':   rpn.unaryOp(x => helpers.factorial(x)); break;
-                    case 'PI':   rpn.push(Math.PI); break;
+                    case 'PI':   rpn.push(Math.PI); state.isEntering = false; break;
                     
-                    // Trigonometry (assuming input in radians)
+                    // Trigonometry
                     case 'SIN': rpn.unaryOp(x => Math.sin(x)); break;
                     case 'COS': rpn.unaryOp(x => Math.cos(x)); break;
                     case 'TAN': rpn.unaryOp(x => Math.tan(x)); break;
 
                     // Financial
                     case 'n': case 'i': case 'PV': case 'PMT': case 'FV':
-                        if (state.isEntering || !state.registers[key]) {
+                        if (state.isEntering) {
+                            rpn.enter();
                             state.registers[key] = state.stack[0];
-                            display.flashMessage(`${key} set`);
-                        } else {
-                            engine.tvm(key);
-                        }
+                            display.flashMessage(`${key} SET`);
+                        } else engine.tvm(key);
                         break;
                         
                     // Pythagorean
-                    case 'CA1': engine.pythagoras('c1'); break;
-                    case 'CA2': engine.pythagoras('c2'); break;
-                    case 'H':   engine.pythagoras('h'); break;
-                    
-                    default: display.flashMessage("N/I");
+                    case 'CA1': case 'CA2': case 'H':
+                         const p = state.pythagoras;
+                         if (state.isEntering) {
+                             rpn.enter();
+                             p[key.toLowerCase()] = state.stack[0];
+                             display.flashMessage(`${key} SET`);
+                         } else {
+                             let result = NaN;
+                             if (key === 'H' && p.c1 !== null && p.c2 !== null) result = Math.sqrt(p.c1**2 + p.c2**2);
+                             else if (key === 'CA1' && p.h !== null && p.c2 !== null) result = Math.sqrt(p.h**2 - p.c2**2);
+                             else if (key === 'CA2' && p.h !== null && p.c1 !== null) result = Math.sqrt(p.h**2 - p.c1**2);
+                             rpn.push(result);
+                             p.c1 = p.c2 = p.h = null; // Reset after calculation
+                         }
+                         break;
                 }
+                if (key !== 'f' && key !== 'g') state.isEntering = false;
             }
         };
 
         const initApp = () => {
             resetState();
             display.update();
-            display.updateContext();
-            
-            dom.buttons.forEach(button => {
-                button.addEventListener('click', () => handle.key(button));
-            });
-
+            dom.buttons.forEach(button => button.addEventListener('click', () => handle.key(button)));
             dom.themeToggle.addEventListener('change', () => {
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('FinanceProTheme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
             });
-
             if (localStorage.getItem('FinanceProTheme') === 'dark') {
                 document.body.classList.add('dark-mode');
                 dom.themeToggle.checked = true;
             }
-            
-            // Keyboard Support
-            document.addEventListener('keydown', (e) => {
-                let key = e.key;
-                if(key === 'Enter' || key === 'NumpadEnter') { e.preventDefault(); handle.func('Enter'); }
-                if(key >= '0' && key <= '9') { handle.number(key); }
-                if(key === '.' || key === ',') { handle.number('.'); }
-                if(key === 'Backspace') { handle.func('CLx'); }
-                if(key === '+') { handle.func('+'); }
-                if(key === '-') { handle.func('-'); }
-                if(key === '*') { handle.func('*'); }
-                if(key === '/') { e.preventDefault(); handle.func('/'); }
-                if(key.toLowerCase() === 'f') { handle.func('f'); }
-                if(key.toLowerCase() === 'g') { handle.func('g'); }
-                display.update();
-                display.updateContext();
-            });
         };
-
         initApp();
     });
     </script>
