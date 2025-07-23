@@ -3,503 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Financeira Pro</title>
+    <title>Calculadora Financeira Pro (HP-12C Style)</title>
     <style>
         /* 1. Reset e Configurações Globais */
         :root {
             --font-main: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             
-            /* Light Theme (Padrão) */
+            /* Light Theme */
             --bg-color-light: #F4F6F9;
             --surface-color-light: #FFFFFF;
+            --calculator-body-light: #EAEAEA;
             --text-color-light: #121212;
             --text-muted-light: #555;
-            --border-color-light: #E0E0E0;
+            --border-color-light: #D1D1D1;
 
             /* Dark Theme */
             --bg-color-dark: #121212;
             --surface-color-dark: #1E1E1E;
+            --calculator-body-dark: #2A2A2A;
             --text-color-dark: #E0E0E0;
             --text-muted-dark: #888;
-            --border-color-dark: #333;
+            --border-color-dark: #3A3A3A;
 
-            /* Cor de Destaque */
-            --accent-color: #FFB700; /* Laranja-amarelado vibrante */
-            --accent-text-color: #000;
+            /* Cores HP-12C */
+            --hp-gold: #D4AF37;
+            --hp-blue: #007bff;
+            --hp-orange: #FFA500;
+            --hp-dark-grey: #333333;
+            --hp-black: #000000;
         }
 
         body {
             font-family: var(--font-main);
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             transition: background-color 0.3s, color 0.3s;
-        }
-
-        /* Aplica as variáveis do tema */
-        body {
             background-color: var(--bg-color-light);
             color: var(--text-color-light);
         }
-
         body.dark-mode {
             background-color: var(--bg-color-dark);
             color: var(--text-color-dark);
         }
 
-        /* 2. Layout Principal */
-        .app-container {
+        /* 2. Layout da Calculadora */
+        .calculator-wrapper {
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            max-width: 1400px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 420px;
+            margin: 20px;
+            background: var(--calculator-body-light);
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color-light);
+            padding: 20px;
         }
-
-        .main-content {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
+        body.dark-mode .calculator-wrapper {
+            background: var(--calculator-body-dark);
+            border-color: var(--border-color-dark);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
         
-        .calculator {
-            flex: 2;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border-color-light);
-        }
-        body.dark-mode .calculator {
-            border-right-color: var(--border-color-dark);
-        }
-
-        /* 3. Header e Controles */
+        /* 3. Header e Theme Toggle */
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
-            background-color: var(--surface-color-light);
-            border-bottom: 1px solid var(--border-color-light);
-        }
-        body.dark-mode .app-header {
-            background-color: var(--surface-color-dark);
-            border-bottom-color: var(--border-color-dark);
-        }
-
-        .app-header h1 {
-            font-size: 1.5em;
-            margin: 0;
-        }
-        
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        /* Theme Toggle Switch */
-        .theme-switch-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .theme-switch {
-            display: inline-block;
-            height: 24px;
-            position: relative;
-            width: 44px;
-        }
-        .theme-switch input { display: none; }
-        .slider {
-            background-color: #ccc;
-            bottom: 0;
-            cursor: pointer;
-            left: 0;
-            position: absolute;
-            right: 0;
-            top: 0;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        .slider:before {
-            background-color: #fff;
-            bottom: 4px;
-            content: "";
-            height: 16px;
-            left: 4px;
-            position: absolute;
-            transition: .4s;
-            width: 16px;
-            border-radius: 50%;
-        }
-        input:checked + .slider {
-            background-color: var(--accent-color);
-        }
-        input:checked + .slider:before {
-            transform: translateX(20px);
-        }
-        
-        /* 4. Display da Calculadora */
-        .display {
-            background-color: var(--bg-color-light);
-            border: 1px solid var(--border-color-light);
-            border-radius: 8px;
-            padding: 15px;
-            text-align: right;
-            margin-bottom: 20px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-        }
-        body.dark-mode .display {
-            background-color: #000;
-            border-color: #444;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .display-main {
-            font-size: 2.5em;
-            font-weight: bold;
-            min-height: 50px;
-            word-wrap: break-word;
-        }
-        .display-context {
-            font-size: 0.9em;
-            color: var(--text-muted-light);
-            min-height: 20px;
-        }
-        body.dark-mode .display-context {
-            color: var(--text-muted-dark);
-        }
-
-        /* 5. Seções e Botões da Calculadora */
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-            gap: 10px;
-        }
-
-        .calc-button {
-            padding: 18px 10px;
-            font-size: 1.1em;
-            border-radius: 6px;
-            border: 1px solid var(--border-color-light);
-            background-color: var(--surface-color-light);
-            color: var(--text-color-light);
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-        body.dark-mode .calc-button {
-            border-color: var(--border-color-dark);
-            background-color: var(--surface-color-dark);
-            color: var(--text-color-dark);
-        }
-
-        .calc-button:hover {
-            filter: brightness(95%);
-        }
-        body.dark-mode .calc-button:hover {
-            filter: brightness(120%);
-        }
-        .calc-button:active {
-            transform: scale(0.97);
-        }
-
-        .btn-function { background-color: #e8e8e8; }
-        body.dark-mode .btn-function { background-color: #2a2a2a; }
-
-        .btn-accent {
-            background-color: var(--accent-color);
-            color: var(--accent-text-color);
-            font-weight: bold;
-        }
-        
-        .btn-clear { background-color: #f5c5c5; }
-        body.dark-mode .btn-clear { background-color: #582828; }
-        
-        /* 6. Painel de Histórico (Novo Requisito Chave) */
-        .history-panel {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--surface-color-light);
-            overflow-y: auto;
-        }
-        body.dark-mode .history-panel {
-            background-color: var(--surface-color-dark);
-        }
-
-        .history-header {
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color-light);
-            padding-bottom: 15px;
-        }
-        body.dark-mode .history-header {
-            border-bottom-color: var(--border-color-dark);
-        }
-
-        .history-header h2 {
-            margin: 0 0 15px 0;
-        }
-
-        .history-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        #history-search {
-            flex-grow: 1;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid var(--border-color-light);
-            background-color: var(--bg-color-light);
-            color: var(--text-color-light);
-        }
-        body.dark-mode #history-search {
-            border-color: var(--border-color-dark);
-            background-color: #333;
-            color: var(--text-color-dark);
-        }
-        
-        #clear-history {
-            padding: 10px 15px;
-            border: 1px solid #ff9999;
-            background-color: #ffe0e0;
-            color: #c53030;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        body.dark-mode #clear-history {
-            background-color: #4d2020;
-            border-color: #c53030;
-            color: #ff9999;
-        }
-
-        #history-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .history-group-title {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: var(--text-muted-light);
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        body.dark-mode .history-group-title {
-            color: var(--text-muted-dark);
-        }
-
-        .history-card {
-            background-color: var(--bg-color-light);
-            border: 1px solid var(--border-color-light);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 12px;
-            transition: box-shadow 0.2s;
-        }
-        .history-card:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        }
-        body.dark-mode .history-card {
-            background-color: #2c2c2c;
-            border-color: var(--border-color-dark);
-        }
-        body.dark-mode .history-card:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .history-card-title {
-            font-weight: bold;
-            margin: 0 0 10px 0;
-        }
-
-        .history-card-details {
-            font-size: 0.9em;
-            color: var(--text-muted-light);
-            margin-bottom: 10px;
-            word-wrap: break-word;
-        }
-        body.dark-mode .history-card-details {
-            color: var(--text-muted-dark);
-        }
-        
-        .history-card-result {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: var(--accent-color);
             margin-bottom: 15px;
         }
+        .app-header h1 {
+            font-size: 1.4em;
+            margin: 0;
+            font-weight: 600;
+        }
+        /* Theme Toggle Switch (código idêntico ao anterior) */
+        .theme-switch-wrapper { display: flex; align-items: center; gap: 8px; }
+        .theme-switch { display: inline-block; height: 24px; position: relative; width: 44px; }
+        .theme-switch input { display: none; }
+        .slider { background-color: #ccc; bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0; transition: .4s; border-radius: 24px; }
+        .slider:before { background-color: #fff; bottom: 4px; content: ""; height: 16px; left: 4px; position: absolute; transition: .4s; width: 16px; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--hp-blue); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
-        .history-card-actions {
-            display: flex;
-            gap: 10px;
+        /* 4. Display da Calculadora */
+        .display-area {
+            background-color: var(--hp-dark-grey);
+            border: 2px solid var(--hp-black);
+            border-radius: 4px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        .display {
+            background-color: #C1C6AD; /* Cor do LCD da HP12C */
+            color: var(--hp-black);
+            border-radius: 3px;
+            padding: 10px;
+            text-align: right;
+        }
+        .display-context {
+            font-family: monospace;
+            font-size: 0.9em;
+            min-height: 18px;
+            opacity: 0.7;
+        }
+        .display-main {
+            font-family: 'Segment7', monospace;
+            font-size: 2.2em;
+            font-weight: bold;
+            min-height: 45px;
+            word-wrap: break-word;
+        }
+        @font-face {
+            font-family: 'Segment7';
+            src: url(https://dl.dafont.com/dl/?f=open_24_display_st) format('truetype');
         }
 
-        .history-action-btn {
-            background: none;
-            border: 1px solid var(--border-color-light);
-            color: var(--text-muted-light);
-            padding: 5px 10px;
-            border-radius: 5px;
+        /* 5. Grid de Botões Reorganizado */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .calc-button {
+            padding: 8px 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.2);
+            border-bottom: 2px solid rgba(0,0,0,0.4);
+            background-color: var(--hp-dark-grey);
+            color: white;
             cursor: pointer;
-            font-size: 0.8em;
+            transition: background-color 0.2s, transform 0.1s;
+            position: relative;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            gap: 5px;
+            min-height: 50px;
         }
-        body.dark-mode .history-action-btn {
-            border-color: #555;
-            color: var(--text-muted-dark);
-        }
-        .history-action-btn:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
+        .calc-button:active {
+            transform: translateY(1px);
+            border-bottom-width: 1px;
         }
 
-        /* 7. Responsividade */
-        @media (max-width: 900px) {
-            .main-content {
-                flex-direction: column;
-            }
-            .calculator {
-                border-right: none;
-                border-bottom: 1px solid var(--border-color-light);
-            }
-            body.dark-mode .calculator {
-                border-bottom-color: var(--border-color-dark);
-            }
-            .history-panel {
-                height: 40vh;
-            }
-        }
+        /* Labels de função (f, g) */
+        .f-label { color: var(--hp-orange); font-size: 0.65em; position: absolute; top: 3px; left: 4px; }
+        .g-label { color: var(--hp-blue); font-size: 0.65em; position: absolute; top: 3px; right: 4px; }
+        .main-label { font-size: 1.1em; }
         
+        /* Estilos de Botões Específicos */
+        .btn-prefix-f { background-color: var(--hp-orange); }
+        .btn-prefix-g { background-color: var(--hp-blue); }
+        .btn-enter { grid-row: span 2; }
+        .btn-arithmetic { background-color: #555; }
+        .btn-on { background: #B22222; grid-column: span 2; }
+        
+        /* 6. Responsividade */
         @media (max-width: 480px) {
-            .app-header h1 {
-                font-size: 1.2em;
-            }
-            .controls {
-                gap: 10px;
-            }
-            .display-main {
-                font-size: 2em;
-            }
-            .button-grid {
-                gap: 8px;
-                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-            }
-            .calc-button {
-                padding: 15px 8px;
-                font-size: 1em;
-            }
+            .calculator-wrapper { padding: 15px; margin: 10px; }
+            .button-grid { gap: 6px; }
+            .calc-button { min-height: 45px; }
+            .app-header h1 { font-size: 1.2em; }
         }
 
     </style>
 </head>
 <body>
-
-    <div class="app-container">
+    <div class="calculator-wrapper">
         <header class="app-header">
-            <h1>Calculadora Financeira Pro</h1>
-            <div class="controls">
-                <div class="theme-switch-wrapper">
-                    <span>☀️</span>
-                    <label class="theme-switch">
-                        <input type="checkbox" id="theme-toggle">
-                        <span class="slider"></span>
-                    </label>
-                    <span>🌙</span>
-                </div>
+            <h1>HP-12C Web</h1>
+            <div class="theme-switch-wrapper">
+                <span>☀️</span>
+                <label class="theme-switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span>🌙</span>
             </div>
         </header>
 
-        <main class="main-content">
-            <section class="calculator">
-                <div class="display">
-                    <div class="display-context" id="display-context">n, i, PV, PMT, FV</div>
-                    <div class="display-main" id="display-main">0</div>
-                </div>
+        <div class="display-area">
+            <div class="display">
+                <div class="display-context" id="display-context">&nbsp;</div>
+                <div class="display-main" id="display-main">0</div>
+            </div>
+        </div>
+        
+        <div class="button-grid">
+            <button class="calc-button" data-key="n" data-g-key="AMORT"><span class="f-label">n</span><span class="g-label">AMORT</span><span class="main-label">12x</span></button>
+            <button class="calc-button" data-key="i" data-g-key="INT"><span class="f-label">i</span><span class="g-label">INT</span><span class="main-label">12÷</span></button>
+            <button class="calc-button" data-key="PV" data-g-key="NPV"><span class="f-label">PV</span><span class="g-label">NPV</span><span class="main-label">CFo</span></button>
+            <button class="calc-button" data-key="PMT" data-g-key="RND"><span class="f-label">PMT</span><span class="g-label">RND</span><span class="main-label">CFj</span></button>
+            <button class="calc-button" data-key="FV" data-g-key="IRR"><span class="f-label">FV</span><span class="g-label">IRR</span><span class="main-label">Nj</span></button>
+            <button class="calc-button" data-key="CHS"><span class="f-label">CHS</span></button>
+            <button class="calc-button" data-key="7"><span class="f-label">7</span></button>
+            <button class="calc-button" data-key="8"><span class="f-label">8</span></button>
+            <button class="calc-button" data-key="9"><span class="f-label">9</span></button>
+            <button class="calc-button btn-arithmetic" data-key="/"><span class="main-label">÷</span></button>
 
-                <div class="button-grid">
-                    <button class="calc-button btn-function" data-key="n">n</button>
-                    <button class="calc-button btn-function" data-key="i">i</button>
-                    <button class="calc-button btn-function" data-key="PV">PV</button>
-                    <button class="calc-button btn-function" data-key="PMT">PMT</button>
-                    <button class="calc-button btn-function" data-key="FV">FV</button>
-                    
-                    <button class="calc-button" data-key="/">÷</button>
-                    <button class="calc-button" data-key="*">×</button>
-                    <button class="calc-button" data-key="-">−</button>
-                    <button class="calc-button" data-key="+">+</button>
+            <button class="calc-button" data-key="yx" data-g-key="PRICE"><span class="f-label">y^x</span><span class="g-label">PRICE</span><span class="main-label">√x</span></button>
+            <button class="calc-button" data-key="1/x" data-g-key="YTM"><span class="f-label">1/x</span><span class="g-label">YTM</span><span class="main-label">%T</span></button>
+            <button class="calc-button" data-key="%" data-g-key="SL"><span class="f-label">%</span><span class="g-label">SL</span><span class="main-label">Δ%</span></button>
+            <button class="calc-button" data-key="EEX" data-g-key="SOYD"><span class="f-label">EEX</span><span class="g-label">SOYD</span><span class="main-label">n!</span></button>
+            <button class="calc-button" data-key="R/S" data-g-key="DB"><span class="f-label">R/S</span><span class="g-label">DB</span><span class="main-label">➤</span></button>
+            <button class="calc-button" data-key="SST"><span class="f-label">SST</span></button>
+            <button class="calc-button" data-key="4"><span class="f-label">4</span></button>
+            <button class="calc-button" data-key="5"><span class="f-label">5</span></button>
+            <button class="calc-button" data-key="6"><span class="f-label">6</span></button>
+            <button class="calc-button btn-arithmetic" data-key="*"><span class="main-label">×</span></button>
 
-                    <button class="calc-button" data-key="7">7</button>
-                    <button class="calc-button" data-key="8">8</button>
-                    <button class="calc-button" data-key="9">9</button>
-                    <button class="calc-button" data-key="Enter">=</button>
-                    
-                    <button class="calc-button" data-key="4">4</button>
-                    <button class="calc-button" data-key="5">5</button>
-                    <button class="calc-button" data-key="6">6</button>
-
-                    <button class="calc-button" data-key="1">1</button>
-                    <button class="calc-button" data-key="2">2</button>
-                    <button class="calc-button" data-key="3">3</button>
-
-                    <button class="calc-button" data-key="0">0</button>
-                    <button class="calc-button" data-key=".">.</button>
-                    <button class="calc-button" data-key="CHS">+/-</button>
-                    
-                    <button class="calc-button btn-clear" data-key="C">C</button>
-                    <button class="calc-button btn-clear" data-key="AC">AC</button>
-                    <button class="calc-button btn-accent" data-key="COMPUTE">COMPUTE</button>
-                </div>
-            </section>
-
-            <section class="history-panel">
-                <div class="history-header">
-                    <h2>Histórico de Cálculos</h2>
-                    <div class="history-controls">
-                        <input type="search" id="history-search" placeholder="Buscar no histórico...">
-                        <button id="clear-history" title="Limpar todo o histórico">🗑️ Limpar Tudo</button>
-                    </div>
-                </div>
-                <ul id="history-list">
-                    </ul>
-            </section>
-        </main>
+            <button class="calc-button btn-on" data-key="AC">ON</button>
+            <button class="calc-button btn-prefix-f" data-key="f">f</button>
+            <button class="calc-button btn-prefix-g" data-key="g">g</button>
+            <button class="calc-button btn-enter" data-key="Enter"><span class="main-label">ENTER</span></button>
+            <button class="calc-button" data-key="1"><span class="f-label">1</span></button>
+            <button class="calc-button" data-key="2"><span class="f-label">2</span></button>
+            <button class="calc-button" data-key="3"><span class="f-label">3</span></button>
+            <button class="calc-button btn-arithmetic" data-key="-"><span class="main-label">−</span></button>
+            
+            <button class="calc-button" data-key="STO"><span class="f-label">STO</span><span class="g-label">LN</span></button>
+            <button class="calc-button" data-key="RCL"><span class="f-label">RCL</span><span class="g-label">e^x</span></button>
+            <button class="calc-button" data-key="CLx"><span class="g-label">CLx</span></button>
+            <button class="calc-button" data-key="0"><span class="f-label">0</span></button>
+            <button class="calc-button" data-key="."><span class="f-label">.</span></button>
+            <button class="calc-button" data-key="Σ+"><span class="f-label">Σ+</span></button>
+            <button class="calc-button btn-arithmetic" data-key="+"><span class="main-label">+</span></button>
+        </div>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Mapeamento de elementos do DOM
+        // Mapeamento do DOM e Estado Inicial
         const dom = {
             displayMain: document.getElementById('display-main'),
             displayContext: document.getElementById('display-context'),
             themeToggle: document.getElementById('theme-toggle'),
-            historyList: document.getElementById('history-list'),
-            clearHistoryBtn: document.getElementById('clear-history'),
-            historySearch: document.getElementById('history-search'),
             buttons: document.querySelectorAll('.calc-button'),
         };
 
-        // Estado da Calculadora
         let state = {
             currentValue: '0',
             previousValue: null,
             operator: null,
             isNewEntry: true,
+            prefix: null, // 'f' or 'g'
             registers: { n: null, i: null, PV: null, PMT: null, FV: null },
-            history: [],
-            lastComputedKey: null,
+            memory: new Array(10).fill(null), // STO/RCL memory registers 0-9
         };
         
         // --- MÓDULO DE TEMA ---
         const themeManager = (() => {
+            // (Código idêntico ao anterior, funciona perfeitamente)
             const body = document.body;
-            
             const applyTheme = (theme) => {
                 if (theme === 'dark') {
                     body.classList.add('dark-mode');
@@ -509,226 +270,113 @@
                     dom.themeToggle.checked = false;
                 }
             };
-
             const toggleTheme = () => {
                 const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
                 applyTheme(newTheme);
                 localStorage.setItem('calculatorTheme', newTheme);
             };
-
             const loadTheme = () => {
                 const savedTheme = localStorage.getItem('calculatorTheme') || 'light';
                 applyTheme(savedTheme);
             };
-
             return { init: loadTheme, toggle: toggleTheme };
         })();
         
-        // --- MÓDULO DE HISTÓRICO ---
-        const historyManager = (() => {
-            const load = () => {
-                const savedHistory = localStorage.getItem('calculatorHistory');
-                state.history = savedHistory ? JSON.parse(savedHistory) : [];
-                render();
-            };
-
-            const save = () => {
-                localStorage.setItem('calculatorHistory', JSON.stringify(state.history));
-            };
-
-            const add = (entry) => {
-                entry.id = Date.now();
-                state.history.unshift(entry); // Adiciona no início
-                save();
-                render();
-            };
-            
-            const clear = () => {
-                if (confirm('Você tem certeza que deseja apagar todo o histórico? Esta ação não pode ser desfeita.')) {
-                    state.history = [];
-                    save();
-                    render();
-                }
-            };
-
-            const deleteItem = (id) => {
-                state.history = state.history.filter(item => item.id !== id);
-                save();
-                render();
-            };
-            
-            const reuse = (id) => {
-                const entry = state.history.find(item => item.id === id);
-                if (!entry || !entry.type.startsWith('TVM')) return;
-                
-                Object.keys(entry.inputs).forEach(key => {
-                    state.registers[key] = entry.inputs[key];
-                });
-                state.lastComputedKey = entry.computed;
-                updateDisplay.context();
-                alert(`Dados do cálculo "${entry.title}" carregados. Pressione COMPUTE para recalcular "${entry.computed}".`);
-            };
-            
-            const copyResult = (text) => {
-                navigator.clipboard.writeText(text).then(() => {
-                    alert('Resultado copiado para a área de transferência!');
-                }, () => {
-                    alert('Falha ao copiar o resultado.');
-                });
-            };
-
-            const formatTemporalGroup = (date) => {
-                const today = new Date();
-                const yesterday = new Date(today);
-                yesterday.setDate(yesterday.getDate() - 1);
-                
-                today.setHours(0, 0, 0, 0);
-                yesterday.setHours(0, 0, 0, 0);
-                date.setHours(0, 0, 0, 0);
-
-                if (date.getTime() === today.getTime()) return "Hoje";
-                if (date.getTime() === yesterday.getTime()) return "Ontem";
-                
-                const lastWeek = new Date(today);
-                lastWeek.setDate(today.getDate() - 7);
-                if(date > lastWeek) return "Na última semana";
-                
-                return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-            };
-
-            const render = (filter = '') => {
-                dom.historyList.innerHTML = '';
-                const filteredHistory = state.history.filter(item => 
-                    JSON.stringify(item).toLowerCase().includes(filter.toLowerCase())
-                );
-                
-                if (filteredHistory.length === 0) {
-                    dom.historyList.innerHTML = '<li>Nenhum registro encontrado.</li>';
-                    return;
-                }
-
-                const grouped = {};
-                filteredHistory.forEach(item => {
-                    const group = formatTemporalGroup(new Date(item.id));
-                    if (!grouped[group]) grouped[group] = [];
-                    grouped[group].push(item);
-                });
-
-                for (const groupName in grouped) {
-                    const groupTitle = document.createElement('h3');
-                    groupTitle.className = 'history-group-title';
-                    groupTitle.textContent = groupName;
-                    dom.historyList.appendChild(groupTitle);
-                    
-                    grouped[groupName].forEach(item => {
-                        const card = document.createElement('li');
-                        card.className = 'history-card';
-                        card.innerHTML = `
-                            <h4 class="history-card-title">${item.title}</h4>
-                            <p class="history-card-details">${item.inputsFormatted}</p>
-                            <p class="history-card-result">${item.resultFormatted}</p>
-                            <div class="history-card-actions">
-                                ${item.type.startsWith('TVM') ? `<button class="history-action-btn reuse-btn" data-id="${item.id}">🔄 Reutilizar</button>` : ''}
-                                <button class="history-action-btn copy-btn" data-result="${item.result}">📋 Copiar</button>
-                                <button class="history-action-btn delete-btn" data-id="${item.id}">🗑️ Excluir</button>
-                            </div>
-                        `;
-                        dom.historyList.appendChild(card);
-                    });
-                }
-            };
-            
-            const bindEvents = () => {
-                dom.clearHistoryBtn.addEventListener('click', clear);
-                dom.historySearch.addEventListener('input', (e) => render(e.target.value));
-                dom.historyList.addEventListener('click', (e) => {
-                    const target = e.target.closest('.history-action-btn');
-                    if (!target) return;
-                    
-                    const id = Number(target.dataset.id);
-                    if (target.classList.contains('reuse-btn')) reuse(id);
-                    if (target.classList.contains('delete-btn')) deleteItem(id);
-                    if (target.classList.contains('copy-btn')) copyResult(target.dataset.result);
-                });
-            };
-
-            return { init: () => { load(); bindEvents(); }, add };
-        })();
-        
-        // --- MÓDULO DE CÁLCULO FINANCEIRO ---
-        const financialEngine = {
-            // TVM: n, i, PV, PMT, FV
-            // i é a taxa por período
+        // --- MÓDULO DE CÁLCULO FINANCEIRO E MATEMÁTICO ---
+        const engine = {
             solveTVM: (solveFor, { n, i, PV, PMT, FV }) => {
-                i = i / 100; // Converte para decimal
-                if (i === 0) { // Caso especial sem juros
+                // Assume 0 for null values, except for the one being solved
+                n = (solveFor !== 'n' && n === null) ? 0 : n;
+                i = (solveFor !== 'i' && i === null) ? 0 : i;
+                PV = (solveFor !== 'PV' && PV === null) ? 0 : PV;
+                PMT = (solveFor !== 'PMT' && PMT === null) ? 0 : PMT;
+                FV = (solveFor !== 'FV' && FV === null) ? 0 : FV;
+
+                i = i / 100; // Work with decimal interest
+                if (i === 0) {
                      switch (solveFor) {
                         case 'PV': return -(FV + PMT * n);
                         case 'FV': return -(PV + PMT * n);
                         case 'PMT': return -(PV + FV) / n;
-                        case 'n': return -(PV + FV) / PMT;
+                        case 'n': return PMT !== 0 ? -(PV + FV) / PMT : null;
                         default: return null;
                      }
                 }
-                
                 const factor = Math.pow(1 + i, n);
-                
                 switch (solveFor) {
-                    case 'FV':
-                        return -(PV * factor + PMT * (factor - 1) / i);
-                    case 'PV':
-                        return -(FV / factor + PMT * (1 - Math.pow(1 + i, -n)) / i);
-                    case 'PMT':
-                        return -(PV * factor + FV) / ((factor - 1) / i);
+                    case 'FV': return -(PV * factor + PMT * (factor - 1) / i);
+                    case 'PV': return -(FV / factor + PMT * (1 - Math.pow(1 + i, -n)) / i);
+                    case 'PMT': return -(PV * factor + FV) / ((factor - 1) / i);
                     case 'n':
-                        // Logaritmo para resolver n
-                        const pvPlusPmtOverI = PV + PMT / i;
-                        if (pvPlusPmtOverI === 0 || (FV + PMT / i) / pvPlusPmtOverI <= 0) return null; // Impossível
-                        return Math.log(-(FV + PMT / i) / (PV + PMT / i)) / Math.log(1 + i);
-                    case 'i':
-                         // Não há fórmula direta, precisa de método numérico (simplificado aqui)
-                         // Para uma calculadora real, seria necessário Newton-Raphson
-                         return null; // A ser implementado se necessário
+                        const logNumerator = -(FV + PMT / i);
+                        const logDenominator = PV + PMT / i;
+                        if (logNumerator <= 0 || logDenominator <= 0) return null;
+                        return Math.log(logNumerator / logDenominator) / Math.log(1 + i);
+                    // 'i' requires iterative solver, omitted for brevity in this step
                 }
                 return null;
+            },
+            factorial: (num) => {
+                if (num < 0) return NaN;
+                if (num === 0) return 1;
+                let result = 1;
+                for (let i = 2; i <= num; i++) result *= i;
+                return result;
+            },
+            depreciationSL: (cost, salvage, life) => (cost - salvage) / life,
+            depreciationDB: (cost, salvage, life, period) => {
+                // Factor can be adjusted, 200% is common (factor=2)
+                const factor = 2;
+                const rate = factor / life;
+                let bookValue = cost;
+                for (let i = 0; i < period; i++) {
+                    const depr = bookValue * rate;
+                    bookValue -= depr;
+                    if (bookValue < salvage) bookValue = salvage;
+                }
+                return bookValue;
             }
         };
 
         // --- MÓDULO DE ATUALIZAÇÃO DO DISPLAY ---
         const updateDisplay = {
             main: (value = state.currentValue) => {
-                // Formata para exibição com separador de milhar
-                const [integerPart, decimalPart] = String(value).split('.');
-                const formattedInteger = parseFloat(integerPart).toLocaleString('pt-BR');
+                let [integerPart, decimalPart] = String(value).split('.');
+                if (String(value).length > 12) {
+                    integerPart = parseFloat(value).toExponential(5);
+                    decimalPart = undefined;
+                }
+                const formattedInteger = parseFloat(integerPart).toLocaleString('pt-BR', {maximumFractionDigits: 10});
                 dom.displayMain.textContent = decimalPart !== undefined ? `${formattedInteger},${decimalPart}` : formattedInteger;
             },
             context: () => {
                 let contextStr = '';
-                ['n', 'i', 'PV', 'PMT', 'FV'].forEach(key => {
-                    const value = state.registers[key];
-                    if (value !== null) {
-                        contextStr += `<span style="font-weight: ${key === state.lastComputedKey ? 'bold; color: var(--accent-color);' : 'normal'};">${key}: ${value}</span> | `;
-                    } else {
-                         contextStr += `<span style="opacity: 0.5;">${key}</span> | `;
-                    }
-                });
-                dom.displayContext.innerHTML = contextStr.slice(0, -3);
+                if (state.prefix) {
+                    contextStr += `<span style="color: var(--hp-${state.prefix === 'f' ? 'orange' : 'blue'}); font-weight: bold;">${state.prefix}</span> `;
+                }
+                // Adicionar outros indicadores de status aqui se necessário
+                dom.displayContext.innerHTML = contextStr || '&nbsp;';
             }
         };
 
         // --- LÓGICA PRINCIPAL DA CALCULADORA ---
-        const handleInput = (key, type) => {
+        const handleInput = (key, gKey) => {
+            if (state.prefix) {
+                key = (state.prefix === 'g' && gKey) ? gKey : key; // Use gKey if available for g-prefix
+                handleFunction(key);
+                state.prefix = null; // Reset prefix after use
+                updateDisplay.context();
+                return;
+            }
             if (/\d/.test(key)) handleNumber(key);
             else if (key === '.') handleDecimal();
-            else if (['n', 'i', 'PV', 'PMT', 'FV'].includes(key)) handleRegister(key);
             else if (['+', '-', '*', '/'].includes(key)) handleOperator(key);
-            else if (key === 'Enter') handleEquals();
-            else if (key === 'COMPUTE') handleCompute();
-            else if (key === 'CHS') toggleSign();
-            else if (key === 'C') clearEntry();
-            else if (key === 'AC') allClear();
+            else if (['n', 'i', 'PV', 'PMT', 'FV'].includes(key)) handleTVM(key);
+            else {
+                handleFunction(key);
+            }
         };
-
+        
         const handleNumber = (number) => {
             if (state.isNewEntry) {
                 state.currentValue = number;
@@ -750,121 +398,131 @@
             updateDisplay.main();
         };
 
-        const toggleSign = () => {
-            if (state.currentValue !== '0') {
-                state.currentValue = String(parseFloat(state.currentValue) * -1);
-                updateDisplay.main();
-            }
-        };
-
-        const clearEntry = () => {
-            state.currentValue = '0';
-            state.isNewEntry = true;
-            updateDisplay.main();
-        };
-        
-        const allClear = () => {
-            state.currentValue = '0';
-            state.previousValue = null;
-            state.operator = null;
-            state.isNewEntry = true;
-            state.registers = { n: null, i: null, PV: null, PMT: null, FV: null };
-            state.lastComputedKey = null;
-            updateDisplay.main();
-            updateDisplay.context();
-        };
-        
-        const handleRegister = (key) => {
-            const value = parseFloat(state.currentValue);
-            if (!isNaN(value)) {
-                state.registers[key] = value;
-                state.isNewEntry = true;
-                updateDisplay.context();
-            }
-        };
-
         const handleOperator = (op) => {
+            // Simplified algebraic operation for now
             if (!state.isNewEntry) {
-                if (state.previousValue !== null && state.operator) {
-                    handleEquals();
+                 if (state.previousValue !== null && state.operator) {
+                    const current = parseFloat(state.currentValue);
+                    let result;
+                    switch(state.operator) {
+                        case '+': result = state.previousValue + current; break;
+                        case '-': result = state.previousValue - current; break;
+                        case '*': result = state.previousValue * current; break;
+                        case '/': result = state.previousValue / current; break;
+                    }
+                    state.currentValue = String(result);
                 }
                 state.previousValue = parseFloat(state.currentValue);
                 state.isNewEntry = true;
             }
             state.operator = op;
         };
-        
-        const handleEquals = () => {
-            if (!state.operator || state.previousValue === null) return;
-            
-            const current = parseFloat(state.currentValue);
-            let result;
-            switch(state.operator) {
-                case '+': result = state.previousValue + current; break;
-                case '-': result = state.previousValue - current; break;
-                case '*': result = state.previousValue * current; break;
-                case '/': result = state.previousValue / current; break;
+
+        const handleTVM = (key) => {
+            if (!state.isNewEntry) { // If there's a number in display, store it
+                state.registers[key] = parseFloat(state.currentValue);
+                state.isNewEntry = true; // Ready for next number or computation
+                alert(`${key} armazenado como ${state.registers[key]}`);
+            } else { // No new number, so compute the key
+                const result = engine.solveTVM(key, state.registers);
+                if (result !== null && !isNaN(result)) {
+                    const roundedResult = parseFloat(result.toFixed(4));
+                    state.registers[key] = roundedResult;
+                    state.currentValue = String(roundedResult);
+                    updateDisplay.main();
+                    alert(`${key} calculado: ${roundedResult}`);
+                } else {
+                    alert(`Não foi possível calcular ${key}. Verifique os valores inseridos.`);
+                }
+            }
+        };
+
+        const handleFunction = (key) => {
+            const value = parseFloat(state.currentValue);
+            let result = value;
+
+            switch (key) {
+                case 'f':
+                case 'g':
+                    state.prefix = key;
+                    updateDisplay.context();
+                    return; // Don't reset newEntry
+                case 'AC': // ON/Clear
+                    state = { ...state, currentValue: '0', previousValue: null, operator: null, isNewEntry: true, registers: { n: null, i: null, PV: null, PMT: null, FV: null }};
+                    break;
+                case 'CLx': // Clear entry
+                    state.currentValue = '0';
+                    state.isNewEntry = true;
+                    break;
+
+                // Math functions
+                case 'CHS': result = value * -1; break;
+                case '1/x': result = 1 / value; break;
+                case '√x': result = Math.sqrt(value); break;
+                case 'n!': result = engine.factorial(value); break;
+                case 'LN': result = Math.log(value); break;
+                case 'e^x': result = Math.exp(value); break;
+                case 'yx': // Requires RPN stack, simplified here
+                    state.previousValue = value;
+                    state.operator = '^';
+                    state.isNewEntry = true;
+                    return;
+                
+                // Memory
+                case 'STO':
+                case 'RCL':
+                    state.prefix = key; // Wait for a number key
+                    alert(`Pressione uma tecla de 0 a 9 para ${key === 'STO' ? 'armazenar' : 'recuperar'}.`);
+                    return;
+
+                // Placeholder for unimplemented functions
+                case 'AMORT': case 'INT': case 'NPV': case 'RND': case 'IRR': case 'PRICE': case 'YTM': case 'SL': case 'SOYD': case 'DB':
+                    alert(`Função "${key}" ainda não implementada.`);
+                    break;
             }
             
             state.currentValue = String(result);
-            state.operator = null;
-            state.previousValue = null;
             updateDisplay.main();
+            state.isNewEntry = true;
         };
 
-        const handleCompute = () => {
-            const keys = ['n', 'i', 'PV', 'PMT', 'FV'];
-            const nullKeys = keys.filter(k => state.registers[k] === null);
-            
-            if (nullKeys.length !== 1) {
-                alert('Para calcular uma variável TVM, exatamente 4 das 5 devem ser preenchidas.');
-                return;
+        const handleMemory = (memKey, number) => {
+            if (memKey === 'STO') {
+                state.memory[number] = parseFloat(state.currentValue);
+                alert(`Valor ${state.memory[number]} armazenado no registro ${number}.`);
+            } else if (memKey === 'RCL') {
+                if (state.memory[number] !== null) {
+                    state.currentValue = String(state.memory[number]);
+                    updateDisplay.main();
+                    state.isNewEntry = false;
+                }
             }
-            
-            const solveFor = nullKeys[0];
-            const result = financialEngine.solveTVM(solveFor, state.registers);
-            
-            if (result === null || isNaN(result)) {
-                alert(`Não foi possível calcular ${solveFor}. Verifique os valores de entrada.`);
-                return;
-            }
-
-            state.registers[solveFor] = parseFloat(result.toFixed(4));
-            state.lastComputedKey = solveFor;
-            state.currentValue = String(state.registers[solveFor]);
-            
-            updateDisplay.main();
-            updateDisplay.context();
-            
-            // Adicionar ao histórico
-            const inputsFormatted = keys.filter(k => k !== solveFor).map(k => `${k}: ${state.registers[k]}`).join(', ');
-            historyManager.add({
-                type: 'TVM',
-                title: `TVM - Cálculo de ${solveFor}`,
-                inputs: { ...state.registers },
-                computed: solveFor,
-                inputsFormatted: `Entradas: ${inputsFormatted}`,
-                result: state.registers[solveFor],
-                resultFormatted: `Resultado (${solveFor}): ${state.registers[solveFor].toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-            });
+            state.prefix = null;
         };
 
         // --- INICIALIZAÇÃO ---
         const init = () => {
             themeManager.init();
-            historyManager.init();
             updateDisplay.main();
             updateDisplay.context();
 
             dom.themeToggle.addEventListener('change', themeManager.toggle);
             dom.buttons.forEach(button => {
                 button.addEventListener('click', () => {
-                    handleInput(button.dataset.key);
+                    const key = button.dataset.key;
+                    const gKey = button.dataset.gKey;
+                    
+                    // Special handling for memory STO/RCL
+                    if ((state.prefix === 'STO' || state.prefix === 'RCL') && /\d/.test(key)) {
+                        handleMemory(state.prefix, parseInt(key));
+                    } else {
+                        handleInput(key, gKey);
+                    }
                 });
             });
         };
 
-        init(); // Inicia a aplicação
+        init();
     });
     </script>
 </body>
