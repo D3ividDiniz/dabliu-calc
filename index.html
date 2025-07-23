@@ -16,8 +16,8 @@
         body { font-family: var(--font-main); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: var(--bg-light); color: var(--text-light); transition: background-color 0.3s; -webkit-font-smoothing: antialiased; }
         body.dark-mode { background: var(--bg-dark); color: var(--text-dark); }
 
-        /* 2. Layout da Calculadora - Estilo App iOS */
-        .calculator-wrapper { width: 100%; max-width: 400px; background: var(--surface-light); border-radius: 24px; box-shadow: 0 12px 40px var(--shadow-light); border: 1px solid var(--border-light); padding: 20px; margin: 15px; animation: fadeIn 0.5s ease-in-out; }
+        /* 2. Layout da Calculadora */
+        .calculator-wrapper { width: 100%; max-width: 420px; background: var(--surface-light); border-radius: 24px; box-shadow: 0 12px 40px var(--shadow-light); border: 1px solid var(--border-light); padding: 20px; margin: 15px; animation: fadeIn 0.5s ease-in-out; }
         body.dark-mode .calculator-wrapper { background: var(--surface-dark); border-color: var(--border-dark); box-shadow: 0 12px 40px var(--shadow-dark); }
         
         /* 3. Header e Controles */
@@ -32,15 +32,13 @@
         input:checked + .slider:before { transform: translateX(20px); }
 
         /* 4. Display da Calculadora */
-        .display-area { background: var(--hp-black); border-radius: 8px; padding: 5px; margin-bottom: 20px; position: relative; }
+        .display-area { background: var(--hp-black); border-radius: 8px; padding: 5px; margin-bottom: 20px; }
         .display { background: #D9E0C1; color: var(--hp-black); border-radius: 4px; padding: 10px 15px; text-align: right; overflow: hidden; }
         .display-context { font-family: monospace; font-size: 0.9em; min-height: 18px; color: #555; font-weight: bold; }
         .display-main { font-family: 'DSEG7-Classic', monospace; font-size: clamp(2em, 8vw, 2.5em); font-weight: normal; min-height: 45px; word-wrap: break-word; letter-spacing: 1.5px; }
-        #help-btn { position: absolute; top: 8px; left: 8px; background: none; border: none; color: #7f8c8d; font-size: 1.2em; cursor: pointer; z-index: 10; transition: transform 0.2s; }
-        #help-btn:hover { transform: scale(1.1); }
         @font-face { font-family: 'DSEG7-Classic'; src: url('https://cdn.jsdelivr.net/gh/keshikan/DSEG@v0.46/fonts/DSEG7-Classic-Bold.woff') format('woff'); }
 
-        /* 5. Grid de Botões Responsivo e Organizado */
+        /* 5. Grid de Botões */
         .button-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(8px, 2vw, 12px); }
         .calc-button { padding: 5px; font-weight: 600; border-radius: 12px; border: none; background: linear-gradient(145deg, #5a5a5a, #3c3c3c); color: white; cursor: pointer; transition: all 0.15s ease-out; box-shadow: 0 4px 8px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.1); position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: clamp(50px, 12vw, 60px); -webkit-user-select: none; user-select: none; }
         .calc-button:active { transform: scale(0.97); box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
@@ -50,23 +48,7 @@
         .btn-prefix-f { background: linear-gradient(145deg, #ffb74d, var(--hp-orange)); }
         .btn-prefix-g { background: linear-gradient(145deg, #64b5f6, var(--hp-blue)); }
         .btn-enter { background: linear-gradient(145deg, #78909c, #546e7a); grid-row: span 2; }
-        .btn-on { background: linear-gradient(145deg, #e57373, #d32f2f); }
-        
-        /* 6. Modal (Tutorial e Fluxo de Caixa) */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .modal-overlay.visible { opacity: 1; pointer-events: auto; }
-        .modal-content { background: var(--surface-light); color: var(--text-light); padding: 25px; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); animation: fadeIn 0.4s; }
-        body.dark-mode .modal-content { background: var(--surface-dark); color: var(--text-dark); }
-        .modal-content h2 { margin-top: 0; color: var(--hp-blue); }
-        .modal-nav { display: flex; justify-content: space-between; margin-top: 20px; }
-        .modal-btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
-        .btn-primary { background: var(--hp-blue); color: white; }
-        #cf-list { max-height: 200px; overflow-y: auto; margin-bottom: 15px; border: 1px solid var(--border-light); border-radius: 8px; padding: 10px;}
-        body.dark-mode #cf-list { border-color: var(--border-dark); }
-        .cf-item { display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid var(--border-light); }
-        body.dark-mode .cf-item { border-bottom-color: var(--border-dark); }
-        #cf-input { width: 95%; padding: 10px; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg-light); color: var(--text-light); }
-        body.dark-mode #cf-input { border-color: var(--border-dark); background: var(--bg-dark); color: var(--text-dark); }
+        .btn-op { background: linear-gradient(145deg, #424242, #303030); }
     </style>
 </head>
 <body>
@@ -77,62 +59,48 @@
                 <span>☀️</span><label class="theme-switch"><input type="checkbox" id="theme-toggle"><span class="slider"></span></label><span>🌙</span>
             </div>
         </header>
+
         <div class="display-area">
-            <button id="help-btn">?</button>
             <div class="display">
                 <div class="display-context" id="display-context">&nbsp;</div>
-                <div class="display-main" id="display-main">0</div>
+                <div class="display-main" id="display-main">0.00</div>
             </div>
         </div>
+
         <div class="button-grid">
-            <button class="calc-button" data-key="n" data-g-key="AMORT"><span class="f-label">n</span><span class="g-label">AMORT</span></button>
-            <button class="calc-button" data-key="i" data-g-key="INT"><span class="f-label">i</span><span class="g-label">INT</span></button>
-            <button class="calc-button" data-key="PV" data-g-key="NPV"><span class="f-label">PV</span><span class="g-label">NPV</span></button>
-            <button class="calc-button" data-key="PMT" data-g-key="RND"><span class="f-label">PMT</span><span class="g-label">RND</span></button>
-            <button class="calc-button" data-key="FV" data-g-key="IRR"><span class="f-label">FV</span><span class="g-label">IRR</span></button>
-            <button class="calc-button" data-key="yx"><span class="g-label">PRICE</span><span class="main-label">y<sup>x</sup></span></button>
-            <button class="calc-button" data-key="1/x"><span class="g-label">YTM</span><span class="main-label">1/x</span></button>
-            <button class="calc-button" data-key="%"><span class="g-label">SL</span><span class="main-label">%</span></button>
-            <button class="calc-button" data-key="Δ%"><span class="g-label">SOYD</span><span class="main-label">Δ%</span></button>
-            <button class="calc-button" data-key="EEX"><span class="g-label">DB</span><span class="main-label">EEX</span></button>
-            <button class="calc-button" data-key="STO"><span class="g-label">LN</span><span class="main-label">STO</span></button>
-            <button class="calc-button" data-key="RCL"><span class="g-label">e^x</span><span class="main-label">RCL</span></button>
+            <button class="calc-button" data-key="n"><span class="main-label">n</span></button>
+            <button class="calc-button" data-key="i"><span class="main-label">i</span></button>
+            <button class="calc-button" data-key="PV"><span class="main-label">PV</span></button>
+            <button class="calc-button" data-key="PMT"><span class="main-label">PMT</span></button>
+            <button class="calc-button" data-key="FV"><span class="main-label">FV</span></button>
+            
+            <button class="calc-button" data-key="y^x"  data-g-key="y_root_x"><span class="g-label">y√x</span><span class="main-label">y<sup>x</sup></span></button>
+            <button class="calc-button" data-key="sqrt" data-g-key="x^2"><span class="g-label">x²</span><span class="main-label">√x</span></button>
+            <button class="calc-button" data-key="ln"   data-g-key="LOG"><span class="g-label">log</span><span class="main-label">ln</span></button>
+            <button class="calc-button" data-key="%"    data-f-key="CHS"><span class="f-label">+/-</span><span class="main-label">%</span></button>
+            <button class="calc-button" data-key="CLx"  data-f-key="AC"><span class="f-label">AC</span><span class="main-label">CLx</span></button>
+
             <button class="calc-button btn-prefix-f" data-key="f"><span class="main-label">f</span></button>
+            <button class="calc-button" data-key="7" data-f-key="SIN" data-g-key="CA1"><span class="f-label">sin</span><span class="g-label">ca₁</span><span class="main-label">7</span></button>
+            <button class="calc-button" data-key="8" data-f-key="COS" data-g-key="CA2"><span class="f-label">cos</span><span class="g-label">ca₂</span><span class="main-label">8</span></button>
+            <button class="calc-button" data-key="9" data-f-key="TAN" data-g-key="H"><span class="f-label">tan</span><span class="g-label">h</span><span class="main-label">9</span></button>
+            <button class="calc-button btn-op" data-key="/"><span class="main-label">÷</span></button>
+
             <button class="calc-button btn-prefix-g" data-key="g"><span class="main-label">g</span></button>
-            <button class="calc-button" data-key="CLx"><span class="g-label">CLΣ</span><span class="main-label">CLx</span></button>
-            <button class="calc-button" data-key="7"><span class="main-label">7</span></button>
-            <button class="calc-button" data-key="8"><span class="main-label">8</span></button>
-            <button class="calc-button" data-key="9"><span class="main-label">9</span></button>
-            <button class="calc-button" data-key="/"><span class="main-label">÷</span></button>
-            <button class="calc-button btn-on" data-key="AC"><span class="main-label">AC</span></button>
-            <button class="calc-button" data-key="4"><span class="main-label">4</span></button>
+            <button class="calc-button" data-key="4" data-f-key="n!"><span class="f-label">x!</span><span class="main-label">4</span></button>
             <button class="calc-button" data-key="5"><span class="main-label">5</span></button>
             <button class="calc-button" data-key="6"><span class="main-label">6</span></button>
-            <button class="calc-button" data-key="*"><span class="main-label">×</span></button>
-            <button class="calc-button" data-key="CHS"><span class="main-label">+/-</span></button>
-            <button class="calc-button" data-key="1"><span class="main-label">1</span></button>
+            <button class="calc-button btn-op" data-key="*"><span class="main-label">×</span></button>
+
+            <button class="calc-button" data-key="1" data-g-key="PI"><span class="g-label">π</span><span class="main-label">1</span></button>
             <button class="calc-button" data-key="2"><span class="main-label">2</span></button>
             <button class="calc-button" data-key="3"><span class="main-label">3</span></button>
-            <button class="calc-button" data-key="-"><span class="main-label">−</span></button>
+            <button class="calc-button btn-op" data-key="-"><span class="main-label">−</span></button>
             <button class="calc-button btn-enter" data-key="Enter"><span class="main-label">ENTER</span></button>
+            
             <button class="calc-button" data-key="0" style="grid-column: span 2;"><span class="main-label">0</span></button>
             <button class="calc-button" data-key="."><span class="main-label">.</span></button>
-            <button class="calc-button" data-key="+"><span class="main-label">+</span></button>
-        </div>
-    </div>
-    
-    <div class="modal-overlay" id="tutorial-modal"><div class="modal-content" id="tutorial-content"></div></div>
-    <div class="modal-overlay" id="cf-modal">
-        <div class="modal-content">
-            <h2>Editor de Fluxo de Caixa</h2>
-            <p>Insira o valor e pressione Adicionar. O 1º é o Investimento Inicial (CFo).</p>
-            <div id="cf-list"></div>
-            <input type="number" id="cf-input" placeholder="Valor do Fluxo de Caixa">
-            <div class="modal-nav">
-                <button class="modal-btn" id="cf-clear">Limpar</button>
-                <button class="modal-btn btn-primary" id="cf-add">Adicionar</button>
-                <button class="modal-btn" id="cf-done">Concluir</button>
-            </div>
+            <button class="calc-button btn-op" data-key="+"><span class="main-label">+</span></button>
         </div>
     </div>
 
@@ -143,15 +111,6 @@
             displayContext: document.getElementById('display-context'),
             themeToggle: document.getElementById('theme-toggle'),
             buttons: document.querySelectorAll('.calc-button'),
-            helpBtn: document.getElementById('help-btn'),
-            tutorialModal: document.getElementById('tutorial-modal'),
-            tutorialContent: document.getElementById('tutorial-content'),
-            cfModal: document.getElementById('cf-modal'),
-            cfList: document.getElementById('cf-list'),
-            cfInput: document.getElementById('cf-input'),
-            cfAddBtn: document.getElementById('cf-add'),
-            cfClearBtn: document.getElementById('cf-clear'),
-            cfDoneBtn: document.getElementById('cf-done'),
         };
 
         let state;
@@ -162,44 +121,68 @@
                 lastX: 0,
                 inputBuffer: '0',
                 isEntering: true,
-                prefix: null,
+                prefix: null, // 'f', 'g'
                 registers: { n: null, i: null, PV: null, PMT: null, FV: null },
-                cashFlows: [],
-                memory: new Array(10).fill(null),
+                pythagoras: { c1: null, c2: null, h: null, count: 0},
                 config: { decimalPlaces: 2 }
             };
+        };
+        
+        const helpers = {
+            factorial: (num) => {
+                if (num < 0 || num % 1 !== 0) return NaN; // Factorial is for non-negative integers
+                if (num === 0 || num === 1) return 1;
+                let result = 1;
+                for (let i = 2; i <= num; i++) {
+                    result *= i;
+                }
+                return result;
+            }
         };
 
         const display = {
             update: () => {
-                const value = state.isEntering ? state.inputBuffer : state.stack[0];
-                let formattedValue;
-                if (Math.abs(Number(value)) > 9999999999 || (Math.abs(Number(value)) < 0.00001 && Number(value) !== 0)) {
-                    formattedValue = Number(value).toExponential(4);
-                } else {
-                    formattedValue = Number(value).toLocaleString('pt-BR', {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 6
-                    });
+                const valueStr = state.isEntering ? state.inputBuffer : String(state.stack[0]);
+                const numValue = parseFloat(valueStr.replace(',', '.'));
+
+                if (isNaN(numValue)) {
+                    dom.displayMain.textContent = "Error";
+                    return;
                 }
+
+                let formattedValue;
+                if (Math.abs(numValue) > 9999999999 || (Math.abs(numValue) < 0.000000001 && numValue !== 0)) {
+                    formattedValue = numValue.toExponential(state.config.decimalPlaces);
+                } else {
+                    formattedValue = numValue.toFixed(state.config.decimalPlaces);
+                }
+                
                 dom.displayMain.textContent = formattedValue.replace('.', ',');
             },
             updateContext: () => {
                 let contextStr = '';
                 if (state.prefix) {
                     const color = state.prefix === 'f' ? 'var(--hp-orange)' : 'var(--hp-blue)';
-                    contextStr += `<span style="color: ${color}; font-weight: bold;">${state.prefix.toUpperCase()}</span>`;
+                    contextStr += `<span style="color: ${color}; font-weight: bold;">${state.prefix}</span>`;
                 }
                 dom.displayContext.innerHTML = contextStr || '&nbsp;';
             },
-            flashError: (msg) => {
+            flashMessage: (msg, duration = 1500) => {
+                const originalText = dom.displayMain.textContent;
                 dom.displayMain.textContent = msg;
-                setTimeout(display.update, 1000);
+                setTimeout(() => {
+                    dom.displayMain.textContent = originalText;
+                    display.update();
+                }, duration);
             }
         };
 
         const rpn = {
             push: (value) => {
+                if (isNaN(value)) { 
+                    display.flashMessage("Error");
+                    value = 0; 
+                }
                 state.lastX = state.stack[0];
                 state.stack.unshift(value);
                 state.stack.pop();
@@ -219,9 +202,9 @@
             },
             binaryOp: (op) => {
                 if (state.isEntering) rpn.enter();
-                const y = rpn.pop();
                 const x = rpn.pop();
-                rpn.push(op(x, y));
+                const y = rpn.pop();
+                rpn.push(op(y, x));
             },
             unaryOp: (op) => {
                 if (state.isEntering) rpn.enter();
@@ -232,73 +215,86 @@
 
         const engine = {
             tvm: (key) => {
-                const regs = { ...state.registers };
-                Object.keys(regs).forEach(k => { if(regs[k] === null && k !== key) regs[k] = 0; });
-                const { n, i, PV, PMT, FV } = regs;
+                const { n, i, PV, PMT, FV } = state.registers;
+                const i_dec = (i || 0) / 100;
+                let result = NaN;
 
-                const i_dec = i / 100;
-
-                switch(key) {
-                    case 'FV': return rpn.unaryOp(() => -(PV * Math.pow(1 + i_dec, n) + PMT * (Math.pow(1 + i_dec, n) - 1) / i_dec));
-                    case 'PV': return rpn.unaryOp(() => -(FV / Math.pow(1 + i_dec, n) + PMT * (1 - Math.pow(1 + i_dec, -n)) / i_dec));
-                    case 'PMT': return rpn.unaryOp(() => -(PV * Math.pow(1 + i_dec, n) + FV) / ((Math.pow(1 + i_dec, n) - 1) / i_dec));
-                    case 'n': return rpn.unaryOp(() => Math.log(-(FV + PMT/i_dec)/(PV + PMT/i_dec)) / Math.log(1 + i_dec));
-                    case 'i': 
-                        const fn = (rate) => PV * Math.pow(1 + rate, n) + PMT * (Math.pow(1 + rate, n) - 1) / rate + FV;
-                        const dfn = (rate) => n * PV * Math.pow(1 + rate, n-1) + PMT * (n * rate * Math.pow(1+rate, n-1) - (Math.pow(1+rate, n)-1)) / (rate*rate);
-                        let rate = 0.05; // Initial guess
-                        for (let k=0; k < 20; k++) { // Newton-Raphson
-                            rate = rate - fn(rate) / dfn(rate);
-                        }
-                        return rpn.unaryOp(() => rate * 100);
-                }
-            },
-            npv: () => {
-                if(state.isEntering) rpn.enter();
-                const rate = state.registers.i / 100;
-                let npv = state.cashFlows.length > 0 ? state.cashFlows[0].value : 0;
-                for(let j=1; j < state.cashFlows.length; j++) {
-                    npv += state.cashFlows[j].value / Math.pow(1 + rate, j);
-                }
-                rpn.push(npv);
-            },
-            irr: () => {
-                if(state.isEntering) rpn.enter();
-                let rate = 0.1; // Initial guess
-                for(let i=0; i < 50; i++) { // Newton-Raphson for IRR
-                    let f_x = 0; let df_x = 0;
-                    for(let j=0; j < state.cashFlows.length; j++) {
-                        f_x += state.cashFlows[j].value / Math.pow(1+rate, j);
-                        if (j > 0) df_x -= j * state.cashFlows[j].value / Math.pow(1+rate, j+1);
+                try {
+                    switch(key) {
+                        case 'FV': result = -(PV * Math.pow(1 + i_dec, n) + (PMT || 0) * ((Math.pow(1 + i_dec, n) - 1) / i_dec)); break;
+                        case 'PV': result = -(FV / Math.pow(1 + i_dec, n) + (PMT || 0) * ((1 - Math.pow(1 + i_dec, -n)) / i_dec)); break;
+                        case 'n': result = Math.log((-FV + (PMT/i_dec)) / (PV + (PMT/i_dec))) / Math.log(1 + i_dec); break;
+                        case 'i': // Simplified; a real one needs an iterative solver
+                           result = (Math.pow(FV / -PV, 1/n) - 1) * 100;
+                           if (isNaN(result)) display.flashMessage("Needs PV/FV");
+                           break;
+                        case 'PMT': result = -(PV + FV / Math.pow(1 + i_dec, n)) * (i_dec / (1 - Math.pow(1 + i_dec, -n))); break;
                     }
-                    if (Math.abs(df_x) < 1e-7) break;
-                    const new_rate = rate - f_x / df_x;
-                    if (Math.abs(new_rate - rate) < 1e-7) break;
-                    rate = new_rate;
+                } catch (e) {
+                    display.flashMessage("Calc Error");
+                    return;
                 }
-                rpn.push(rate * 100);
+                
+                if (isNaN(result)) {
+                   const filledCount = Object.values(state.registers).filter(v => v !== null).length;
+                   display.flashMessage(`${4 - filledCount} more`);
+                } else {
+                    rpn.push(result);
+                }
             },
-            amortize: () => {
-                // ... implementation for AMORT
-                display.flashError("AMORT N/I");
+            pythagoras: (key) => {
+                const p = state.pythagoras;
+                if(state.isEntering) rpn.enter();
+                
+                p[key] = state.stack[0];
+                p.count++;
+                display.flashMessage(`${key.toUpperCase()} set`);
+
+                if (p.count >= 2) {
+                    let result = NaN;
+                    try {
+                        if (key === 'h' && p.c1 && p.c2) result = Math.sqrt(p.c1**2 + p.c2**2);
+                        else if (key === 'c1' && p.h && p.c2) result = Math.sqrt(p.h**2 - p.c2**2);
+                        else if (key === 'c2' && p.h && p.c1) result = Math.sqrt(p.h**2 - p.c1**2);
+                    } catch(e) { result = NaN; }
+                    
+                    if (!isNaN(result)) {
+                        rpn.push(result);
+                        p.c1 = p.c2 = p.h = null;
+                        p.count = 0;
+                    }
+                }
             }
         };
 
         const handle = {
-            key: (key, gKey) => {
-                if (state.prefix) {
-                    const func = state.prefix === 'f' ? key : gKey;
-                    handle.func(func);
+            key: (button) => {
+                const key = button.dataset.key;
+                const fKey = button.dataset.fKey;
+                const gKey = button.dataset.gKey;
+
+                if (state.prefix === 'f' && fKey) {
+                    handle.func(fKey);
+                    state.prefix = null;
+                } else if (state.prefix === 'g' && gKey) {
+                    handle.func(gKey);
                     state.prefix = null;
                 } else {
-                    handle.func(key);
+                    // Special case for f-prefix + number for setting decimal places
+                    if (state.prefix === 'f' && "0123456789".includes(key)) {
+                        state.config.decimalPlaces = parseInt(key);
+                        display.flashMessage(`FIX ${key}`);
+                        state.prefix = null;
+                    } else {
+                       handle.func(key);
+                    }
                 }
                 display.update();
                 display.updateContext();
             },
             number: (digit) => {
                 if (!state.isEntering) {
-                    rpn.push(state.stack[0]);
+                    rpn.enter(); // Push X to Y
                     state.inputBuffer = '0';
                     state.isEntering = true;
                 }
@@ -315,89 +311,64 @@
                     return;
                 }
                 
+                if (state.isEntering && key !== 'Enter' && key !== 'CHS' && key !== 'CLx') {
+                    rpn.enter();
+                }
                 state.isEntering = false;
 
                 switch (key) {
-                    case 'Enter': rpn.enter(); break;
+                    // System & Stack
+                    case 'Enter': rpn.enter(); state.isEntering = false; break;
                     case 'CHS':
-                        if(state.isEntering) state.inputBuffer = String(-parseFloat(state.inputBuffer.replace(',','.'))).replace('.',',');
-                        else rpn.unaryOp(x => -x);
+                        if(state.isEntering && state.inputBuffer !== '0') {
+                            state.inputBuffer = String(-parseFloat(state.inputBuffer.replace(',','.'))).replace('.',',');
+                        } else {
+                            rpn.unaryOp(x => -x);
+                        }
                         break;
-                    case 'CLx': state.inputBuffer = '0'; state.isEntering = true; break;
+                    case 'CLx': state.inputBuffer = '0'; state.isEntering = true; state.stack[0] = 0; break;
                     case 'AC': resetState(); break;
+                    case 'f': case 'g': state.prefix = key; break;
                     
-                    case '+': rpn.binaryOp((x, y) => x + y); break;
-                    case '-': rpn.binaryOp((x, y) => y - x); break;
-                    case '*': rpn.binaryOp((x, y) => x * y); break;
-                    case '/': rpn.binaryOp((x, y) => y / x); break;
-                    case 'yx': rpn.binaryOp((x, y) => Math.pow(y, x)); break;
-                    case '1/x': rpn.unaryOp(x => 1 / x); break;
+                    // Basic Arithmetic
+                    case '+': rpn.binaryOp((y, x) => y + x); break;
+                    case '-': rpn.binaryOp((y, x) => y - x); break;
+                    case '*': rpn.binaryOp((y, x) => y * x); break;
+                    case '/': rpn.binaryOp((y, x) => y / x); break;
+                    case '%': rpn.binaryOp((y, x) => (y * x) / 100); break;
+
+                    // Scientific
+                    case 'y^x':  rpn.binaryOp((y, x) => Math.pow(y, x)); break;
+                    case 'sqrt': rpn.unaryOp(x => Math.sqrt(x)); break;
+                    case 'x^2':  rpn.unaryOp(x => x * x); break;
+                    case 'ln':   rpn.unaryOp(x => Math.log(x)); break;
+                    case 'LOG':  rpn.binaryOp((y, x) => Math.log(y) / Math.log(x)); break;
+                    case 'y_root_x': rpn.binaryOp((y, x) => Math.pow(y, 1/x)); break;
+                    case 'n!':   rpn.unaryOp(x => helpers.factorial(x)); break;
+                    case 'PI':   rpn.push(Math.PI); break;
                     
+                    // Trigonometry (assuming input in radians)
+                    case 'SIN': rpn.unaryOp(x => Math.sin(x)); break;
+                    case 'COS': rpn.unaryOp(x => Math.cos(x)); break;
+                    case 'TAN': rpn.unaryOp(x => Math.tan(x)); break;
+
+                    // Financial
                     case 'n': case 'i': case 'PV': case 'PMT': case 'FV':
-                        if (state.isEntering) {
-                            rpn.enter();
+                        if (state.isEntering || !state.registers[key]) {
                             state.registers[key] = state.stack[0];
+                            display.flashMessage(`${key} set`);
                         } else {
                             engine.tvm(key);
                         }
                         break;
+                        
+                    // Pythagorean
+                    case 'CA1': engine.pythagoras('c1'); break;
+                    case 'CA2': engine.pythagoras('c2'); break;
+                    case 'H':   engine.pythagoras('h'); break;
                     
-                    case 'NPV': engine.npv(); break;
-                    case 'IRR': engine.irr(); break;
-
-                    case 'f': case 'g': state.prefix = key; break;
-                    
-                    case 'STO': case 'RCL': state.prefix = key; break;
-
-                    default: display.flashError("N/I");
+                    default: display.flashMessage("N/I");
                 }
-            }
-        };
-
-        const tutorial = {
-            currentStep: 0,
-            steps: [
-                { title: "Bem-vindo à Calculadora Pro!", content: "<p>Este é um tour rápido. Esta calculadora usa <strong>Notação Polonesa Reversa (RPN)</strong>, que é poderosa e rápida quando você se acostuma.</p>" },
-                { title: "Lógica RPN: A Pilha", content: "<p>Em vez de `2 + 3 =`, você digita `2`, `ENTER`, `3`, `+`. O `ENTER` separa os números. O operador age sobre os últimos números inseridos.</p> <p><strong>Exemplo:</strong> Para calcular (5+3)*2, faça: `5 ENTER 3 + 2 *`</p>" },
-                { title: "Funções Financeiras (TVM)", content: "<p>Para calcular juros (i), por exemplo: <br>1. Digite o valor de N e pressione `n`. <br>2. Digite o valor de PV e pressione `PV`. <br>3. Digite o valor de PMT e pressione `PMT`. <br>4. Pressione `i` para calcular o resultado.</p>" },
-                { title: "Funções `f` e `g`", content: "<p>Pressione `f` (laranja) ou `g` (azul) para ativar as funções secundárias dos botões. Um indicador aparecerá no topo do display.</p>" },
-                { title: "Tudo Pronto!", content: "<p>Você pode rever este tutorial a qualquer momento clicando no ícone `?` no canto do display. Aproveite!</p>" }
-            ],
-            init: function() {
-                dom.helpBtn.addEventListener('click', () => this.start());
-                if (!localStorage.getItem('FinanceProTutorialSeen')) { this.start(); }
-            },
-            start: function() { this.currentStep = 0; this.render(); dom.tutorialModal.classList.add('visible'); },
-            render: function() {
-                const step = this.steps[this.currentStep];
-                dom.tutorialContent.innerHTML = `<h2>${step.title}</h2>${step.content}<div class="modal-nav"><button class="modal-btn" id="tutorial-prev" ${this.currentStep === 0 ? 'disabled' : ''}>Anterior</button><button class="modal-btn" id="tutorial-skip">Pular</button><button class="modal-btn btn-primary" id="tutorial-next">${this.currentStep === this.steps.length - 1 ? 'Concluir' : 'Próximo'}</button></div>`;
-                document.getElementById('tutorial-next').onclick = () => this.next();
-                document.getElementById('tutorial-prev').onclick = () => this.prev();
-                document.getElementById('tutorial-skip').onclick = () => this.skip();
-            },
-            next: function() { if (this.currentStep < this.steps.length - 1) { this.currentStep++; this.render(); } else { this.skip(); } },
-            prev: function() { if (this.currentStep > 0) { this.currentStep--; this.render(); } },
-            skip: function() { dom.tutorialModal.classList.remove('visible'); localStorage.setItem('FinanceProTutorialSeen', 'true'); }
-        };
-        
-        const cfInterface = {
-            init: () => {
-                dom.cfAddBtn.addEventListener('click', cfInterface.add);
-                dom.cfClearBtn.addEventListener('click', cfInterface.clear);
-                dom.cfDoneBtn.addEventListener('click', cfInterface.close);
-            },
-            open: () => { cfInterface.render(); dom.cfModal.classList.add('visible'); },
-            close: () => dom.cfModal.classList.remove('visible'),
-            add: () => {
-                const value = parseFloat(dom.cfInput.value);
-                if(isNaN(value)) return;
-                state.cashFlows.push({value});
-                dom.cfInput.value = '';
-                cfInterface.render();
-            },
-            clear: () => { state.cashFlows = []; cfInterface.render(); },
-            render: () => {
-                dom.cfList.innerHTML = state.cashFlows.map((cf, i) => `<div class="cf-item"><span>CF${i}:</span><span>${cf.value.toLocaleString('pt-BR')}</span></div>`).join('');
             }
         };
 
@@ -405,15 +376,9 @@
             resetState();
             display.update();
             display.updateContext();
-            tutorial.init();
-            cfInterface.init();
             
             dom.buttons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const key = button.dataset.key;
-                    const gKey = button.dataset.gKey;
-                    handle.key(key, gKey);
-                });
+                button.addEventListener('click', () => handle.key(button));
             });
 
             dom.themeToggle.addEventListener('change', () => {
@@ -425,6 +390,23 @@
                 document.body.classList.add('dark-mode');
                 dom.themeToggle.checked = true;
             }
+            
+            // Keyboard Support
+            document.addEventListener('keydown', (e) => {
+                let key = e.key;
+                if(key === 'Enter' || key === 'NumpadEnter') { e.preventDefault(); handle.func('Enter'); }
+                if(key >= '0' && key <= '9') { handle.number(key); }
+                if(key === '.' || key === ',') { handle.number('.'); }
+                if(key === 'Backspace') { handle.func('CLx'); }
+                if(key === '+') { handle.func('+'); }
+                if(key === '-') { handle.func('-'); }
+                if(key === '*') { handle.func('*'); }
+                if(key === '/') { e.preventDefault(); handle.func('/'); }
+                if(key.toLowerCase() === 'f') { handle.func('f'); }
+                if(key.toLowerCase() === 'g') { handle.func('g'); }
+                display.update();
+                display.updateContext();
+            });
         };
 
         initApp();
