@@ -2,75 +2,23 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Calculadora Financeira Pro</title>
     <style>
         /* 1. Reset e Configurações Globais */
         :root {
-            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            
-            /* Light Theme */
-            --bg-light: #f0f2f5;
-            --surface-light: #ffffff;
-            --text-light: #1c1e21;
-            --text-muted-light: #65676b;
-            --border-light: #ced0d4;
-            --shadow-light: rgba(0, 0, 0, 0.1);
-
-            /* Dark Theme */
-            --bg-dark: #18191a;
-            --surface-dark: #242526;
-            --text-dark: #e4e6eb;
-            --text-muted-dark: #b0b3b8;
-            --border-dark: #3a3b3c;
-            --shadow-dark: rgba(0, 0, 0, 0.4);
-
-            /* Cores HP-12C */
-            --hp-gold: #D4AF37;
-            --hp-blue: #2E86C1;
-            --hp-orange: #E67E22;
-            --hp-grey: #414A4C;
-            --hp-black: #212121;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --bg-light: #f0f2f5; --surface-light: #ffffff; --text-light: #1c1e21; --border-light: #ced0d4; --shadow-light: rgba(0, 0, 0, 0.1);
+            --bg-dark: #18191a; --surface-dark: #242526; --text-dark: #e4e6eb; --border-dark: #3a3b3c; --shadow-dark: rgba(0, 0, 0, 0.4);
+            --hp-blue: #2E86C1; --hp-orange: #E67E22; --hp-black: #212121;
         }
-
-        /* Animação de fade-in */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        body {
-            font-family: var(--font-main);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: var(--bg-light);
-            color: var(--text-light);
-            transition: background-color 0.3s;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        body.dark-mode {
-            background: var(--bg-dark);
-            color: var(--text-dark);
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        body { font-family: var(--font-main); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: var(--bg-light); color: var(--text-light); transition: background-color 0.3s; -webkit-font-smoothing: antialiased; }
+        body.dark-mode { background: var(--bg-dark); color: var(--text-dark); }
 
         /* 2. Layout da Calculadora - Estilo App iOS */
-        .calculator-wrapper {
-            width: 100%;
-            max-width: 400px;
-            background: var(--surface-light);
-            border-radius: 24px;
-            box-shadow: 0 12px 40px var(--shadow-light);
-            border: 1px solid var(--border-light);
-            padding: 20px;
-            margin: 15px;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        body.dark-mode .calculator-wrapper {
-            background: var(--surface-dark);
-            border-color: var(--border-dark);
-            box-shadow: 0 12px 40px var(--shadow-dark);
-        }
+        .calculator-wrapper { width: 100%; max-width: 400px; background: var(--surface-light); border-radius: 24px; box-shadow: 0 12px 40px var(--shadow-light); border: 1px solid var(--border-light); padding: 20px; margin: 15px; animation: fadeIn 0.5s ease-in-out; }
+        body.dark-mode .calculator-wrapper { background: var(--surface-dark); border-color: var(--border-dark); box-shadow: 0 12px 40px var(--shadow-dark); }
         
         /* 3. Header e Controles */
         .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -84,88 +32,32 @@
         input:checked + .slider:before { transform: translateX(20px); }
 
         /* 4. Display da Calculadora */
-        .display-area {
-            background: var(--hp-black);
-            border-radius: 8px;
-            padding: 5px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        .display {
-            background: #D9E0C1;
-            color: var(--hp-black);
-            border-radius: 4px;
-            padding: 10px 15px;
-            text-align: right;
-            overflow: hidden;
-        }
-        .display-context {
-            font-family: monospace;
-            font-size: 0.9em;
-            min-height: 18px;
-            color: #555;
-            font-weight: bold;
-        }
-        .display-main {
-            font-family: 'DSEG7-Classic', monospace;
-            font-size: clamp(2em, 8vw, 2.5em);
-            font-weight: normal;
-            min-height: 45px;
-            word-wrap: break-word;
-            letter-spacing: 1.5px;
-        }
-        #help-btn {
-            position: absolute;
-            top: 8px; left: 8px; background: none; border: none;
-            color: #7f8c8d; font-size: 1.2em; cursor: pointer; z-index: 10;
-            transition: transform 0.2s;
-        }
+        .display-area { background: var(--hp-black); border-radius: 8px; padding: 5px; margin-bottom: 20px; position: relative; }
+        .display { background: #D9E0C1; color: var(--hp-black); border-radius: 4px; padding: 10px 15px; text-align: right; overflow: hidden; }
+        .display-context { font-family: monospace; font-size: 0.9em; min-height: 18px; color: #555; font-weight: bold; }
+        .display-main { font-family: 'DSEG7-Classic', monospace; font-size: clamp(2em, 8vw, 2.5em); font-weight: normal; min-height: 45px; word-wrap: break-word; letter-spacing: 1.5px; }
+        #help-btn { position: absolute; top: 8px; left: 8px; background: none; border: none; color: #7f8c8d; font-size: 1.2em; cursor: pointer; z-index: 10; transition: transform 0.2s; }
         #help-btn:hover { transform: scale(1.1); }
         @font-face { font-family: 'DSEG7-Classic'; src: url('https://cdn.jsdelivr.net/gh/keshikan/DSEG@v0.46/fonts/DSEG7-Classic-Bold.woff') format('woff'); }
 
         /* 5. Grid de Botões Responsivo e Organizado */
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: clamp(8px, 2vw, 12px);
-        }
-        .calc-button {
-            padding: 5px; font-weight: 600; border-radius: 12px; border: none;
-            background: linear-gradient(145deg, #5a5a5a, #3c3c3c); color: white;
-            cursor: pointer; transition: all 0.15s ease-out;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.1);
-            position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: clamp(50px, 12vw, 60px); -webkit-user-select: none; user-select: none;
-        }
+        .button-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(8px, 2vw, 12px); }
+        .calc-button { padding: 5px; font-weight: 600; border-radius: 12px; border: none; background: linear-gradient(145deg, #5a5a5a, #3c3c3c); color: white; cursor: pointer; transition: all 0.15s ease-out; box-shadow: 0 4px 8px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.1); position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: clamp(50px, 12vw, 60px); -webkit-user-select: none; user-select: none; }
         .calc-button:active { transform: scale(0.97); box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-
-        .f-label, .g-label { font-size: clamp(0.6em, 2vw, 0.7em); font-weight: normal; position: absolute; top: 4px; }
-        .f-label { color: var(--hp-orange); left: 5px; }
-        .g-label { color: var(--hp-blue); right: 5px; }
+        .f-label { font-size: clamp(0.6em, 2vw, 0.7em); font-weight: normal; color: var(--hp-orange); }
+        .g-label { font-size: clamp(0.6em, 2vw, 0.7em); font-weight: normal; color: var(--hp-blue); }
         .main-label { font-size: clamp(1em, 3vw, 1.2em); }
-        
         .btn-prefix-f { background: linear-gradient(145deg, #ffb74d, var(--hp-orange)); }
         .btn-prefix-g { background: linear-gradient(145deg, #64b5f6, var(--hp-blue)); }
         .btn-enter { background: linear-gradient(145deg, #78909c, #546e7a); grid-row: span 2; }
         .btn-on { background: linear-gradient(145deg, #e57373, #d32f2f); }
         
         /* 6. Modal (Tutorial e Fluxo de Caixa) */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.visible { opacity: 1; pointer-events: auto; }
-        .modal-content {
-            background: var(--surface-light); color: var(--text-light);
-            padding: 25px; border-radius: 16px; width: 90%; max-width: 500px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            animation: fadeIn 0.4s;
-        }
+        .modal-content { background: var(--surface-light); color: var(--text-light); padding: 25px; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); animation: fadeIn 0.4s; }
         body.dark-mode .modal-content { background: var(--surface-dark); color: var(--text-dark); }
         .modal-content h2 { margin-top: 0; color: var(--hp-blue); }
-        .modal-content p, .modal-content li { line-height: 1.6; }
         .modal-nav { display: flex; justify-content: space-between; margin-top: 20px; }
         .modal-btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
         .btn-primary { background: var(--hp-blue); color: white; }
@@ -173,15 +65,14 @@
         body.dark-mode #cf-list { border-color: var(--border-dark); }
         .cf-item { display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid var(--border-light); }
         body.dark-mode .cf-item { border-bottom-color: var(--border-dark); }
-        .cf-item:last-child { border: none; }
-        #cf-input { width: 95%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg-light); color: var(--text-light); }
+        #cf-input { width: 95%; padding: 10px; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg-light); color: var(--text-light); }
         body.dark-mode #cf-input { border-color: var(--border-dark); background: var(--bg-dark); color: var(--text-dark); }
     </style>
 </head>
 <body>
     <div class="calculator-wrapper">
         <header class="app-header">
-            <h1>Calc Pro</h1>
+            <h1>Finance Pro</h1>
             <div class="theme-switch-wrapper">
                 <span>☀️</span><label class="theme-switch"><input type="checkbox" id="theme-toggle"><span class="slider"></span></label><span>🌙</span>
             </div>
@@ -199,16 +90,16 @@
             <button class="calc-button" data-key="PV" data-g-key="NPV"><span class="f-label">PV</span><span class="g-label">NPV</span></button>
             <button class="calc-button" data-key="PMT" data-g-key="RND"><span class="f-label">PMT</span><span class="g-label">RND</span></button>
             <button class="calc-button" data-key="FV" data-g-key="IRR"><span class="f-label">FV</span><span class="g-label">IRR</span></button>
-            <button class="calc-button" data-key="yx" data-g-key="PRICE"><span class="main-label">y<sup>x</sup></span></button>
-            <button class="calc-button" data-key="1/x" data-g-key="YTM"><span class="main-label">1/x</span></button>
-            <button class="calc-button" data-key="%" data-g-key="SL"><span class="main-label">%</span></button>
-            <button class="calc-button" data-key="Δ%" data-g-key="SOYD"><span class="main-label">Δ%</span></button>
-            <button class="calc-button" data-key="EEX" data-g-key="DB"><span class="main-label">EEX</span></button>
+            <button class="calc-button" data-key="yx"><span class="g-label">PRICE</span><span class="main-label">y<sup>x</sup></span></button>
+            <button class="calc-button" data-key="1/x"><span class="g-label">YTM</span><span class="main-label">1/x</span></button>
+            <button class="calc-button" data-key="%"><span class="g-label">SL</span><span class="main-label">%</span></button>
+            <button class="calc-button" data-key="Δ%"><span class="g-label">SOYD</span><span class="main-label">Δ%</span></button>
+            <button class="calc-button" data-key="EEX"><span class="g-label">DB</span><span class="main-label">EEX</span></button>
             <button class="calc-button" data-key="STO"><span class="g-label">LN</span><span class="main-label">STO</span></button>
             <button class="calc-button" data-key="RCL"><span class="g-label">e^x</span><span class="main-label">RCL</span></button>
             <button class="calc-button btn-prefix-f" data-key="f"><span class="main-label">f</span></button>
             <button class="calc-button btn-prefix-g" data-key="g"><span class="main-label">g</span></button>
-            <button class="calc-button" data-key="CLx" data-g-key="CLΣ"><span class="main-label">CLx</span></button>
+            <button class="calc-button" data-key="CLx"><span class="g-label">CLΣ</span><span class="main-label">CLx</span></button>
             <button class="calc-button" data-key="7"><span class="main-label">7</span></button>
             <button class="calc-button" data-key="8"><span class="main-label">8</span></button>
             <button class="calc-button" data-key="9"><span class="main-label">9</span></button>
@@ -230,9 +121,7 @@
         </div>
     </div>
     
-    <div class="modal-overlay" id="tutorial-modal">
-        <div class="modal-content" id="tutorial-content"></div>
-    </div>
+    <div class="modal-overlay" id="tutorial-modal"><div class="modal-content" id="tutorial-content"></div></div>
     <div class="modal-overlay" id="cf-modal">
         <div class="modal-content">
             <h2>Editor de Fluxo de Caixa</h2>
@@ -249,7 +138,6 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- MAPEAMENTO DO DOM ---
         const dom = {
             displayMain: document.getElementById('display-main'),
             displayContext: document.getElementById('display-context'),
@@ -266,236 +154,280 @@
             cfDoneBtn: document.getElementById('cf-done'),
         };
 
-        // --- ESTADO DA APLICAÇÃO ---
-        let state = {};
+        let state;
+
         const resetState = () => {
             state = {
                 stack: [0, 0, 0, 0], // RPN Stack: [X, Y, Z, T]
                 lastX: 0,
                 inputBuffer: '0',
-                entering: true, // True if we are entering a new number
-                prefix: null,   // 'f', 'g', 'STO', 'RCL'
+                isEntering: true,
+                prefix: null,
                 registers: { n: null, i: null, PV: null, PMT: null, FV: null },
-                cashFlows: [], // { value, count }
+                cashFlows: [],
                 memory: new Array(10).fill(null),
-                config: { decimalPlaces: 2, dateFormat: 'd.my' }
+                config: { decimalPlaces: 2 }
             };
         };
 
-        // --- MÓDULO DE ATUALIZAÇÃO DO DISPLAY ---
         const display = {
             update: () => {
-                const x = state.entering ? state.inputBuffer : state.stack[0];
-                const formatted = parseFloat(x).toLocaleString('pt-BR', {
-                    maximumFractionDigits: 6,
-                    useGrouping: true
-                });
-                dom.displayMain.textContent = formatted.replace(/\./g, ' '); // Use space for thousands
+                const value = state.isEntering ? state.inputBuffer : state.stack[0];
+                let formattedValue;
+                if (Math.abs(Number(value)) > 9999999999 || (Math.abs(Number(value)) < 0.00001 && Number(value) !== 0)) {
+                    formattedValue = Number(value).toExponential(4);
+                } else {
+                    formattedValue = Number(value).toLocaleString('pt-BR', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 6
+                    });
+                }
+                dom.displayMain.textContent = formattedValue.replace('.', ',');
             },
             updateContext: () => {
                 let contextStr = '';
                 if (state.prefix) {
                     const color = state.prefix === 'f' ? 'var(--hp-orange)' : 'var(--hp-blue)';
-                    contextStr += `<span style="color: ${color}; font-weight: bold;">${state.prefix}</span>`;
+                    contextStr += `<span style="color: ${color}; font-weight: bold;">${state.prefix.toUpperCase()}</span>`;
                 }
                 dom.displayContext.innerHTML = contextStr || '&nbsp;';
             },
-            flashMessage: (msg, type = 'info') => {
-                dom.displayContext.innerHTML = `<span style="color: ${type === 'error' ? 'red' : 'var(--hp-blue)'}">${msg}</span>`;
-                setTimeout(() => display.updateContext(), 1500);
+            flashError: (msg) => {
+                dom.displayMain.textContent = msg;
+                setTimeout(display.update, 1000);
             }
         };
 
-        // --- MOTOR DE CÁLCULO (ENGINE) ---
-        const engine = {
-            // ... (implementação de todas as funções financeiras e matemáticas)
-            // Esta é a parte mais complexa. Seguem as principais implementações.
-
-            // TVM Solver (exemplo para FV)
-            solveTVM: (key, {n, i, PV, PMT, FV}) => {
-                // ... (lógica completa de TVM)
+        const rpn = {
+            push: (value) => {
+                state.lastX = state.stack[0];
+                state.stack.unshift(value);
+                state.stack.pop();
             },
-
-            // Iterative solver for Interest Rate
-            solve_i: ({n, PV, PMT, FV}) => {
-                // ... (implementação do método de Newton-Raphson)
-            },
-
-            // NPV and IRR
-            npv: (rate, cfs) => {
-                // ... (lógica de cálculo do VPL)
-            },
-            irr: (cfs) => {
-                // ... (solver iterativo para TIR)
-            },
-
-            // ... (Amortization, Depreciation, Date, Stats, etc.)
-        };
-
-        // --- LÓGICA DE ENTRADA (RPN) ---
-        const input = {
-            number: (digit) => {
-                if (state.entering) {
-                    if (state.inputBuffer === '0' && digit !== '.') state.inputBuffer = '';
-                    state.inputBuffer += digit;
-                } else {
-                    state.inputBuffer = digit;
-                    state.entering = true;
-                }
-                display.update();
+            pop: () => {
+                const x = state.stack.shift();
+                state.stack.push(state.stack[2]); // T replicates
+                return x;
             },
             enter: () => {
-                if (state.entering) {
-                    input.pushToStack(parseFloat(state.inputBuffer));
-                    state.entering = false;
+                if (state.isEntering) {
+                    rpn.push(parseFloat(state.inputBuffer.replace(',', '.')));
+                    state.isEntering = false;
                 } else {
-                    input.pushToStack(state.stack[0]);
+                    rpn.push(state.stack[0]); // Duplicate X
                 }
-                display.update();
             },
-            pushToStack: (value) => {
-                state.stack.unshift(value); // Adiciona ao início (X)
-                state.stack.pop();          // Remove o último (T antigo)
+            binaryOp: (op) => {
+                if (state.isEntering) rpn.enter();
+                const y = rpn.pop();
+                const x = rpn.pop();
+                rpn.push(op(x, y));
             },
-            popFromStack: () => {
-                const x = state.stack.shift(); // Remove e retorna X
-                state.stack.push(0);           // Adiciona um 0 no fim (novo T)
-                return x;
+            unaryOp: (op) => {
+                if (state.isEntering) rpn.enter();
+                const x = rpn.pop();
+                rpn.push(op(x));
             }
         };
 
-        // --- MANIPULADORES DE FUNÇÃO ---
-        const functions = {
-            // ... (mapeamento de cada botão para uma ação)
-            // Exemplo de uma operação binária
-            add: () => {
-                if (state.entering) input.enter();
-                const y = input.popFromStack();
-                const x = input.popFromStack();
-                input.pushToStack(x + y);
-                display.update();
+        const engine = {
+            tvm: (key) => {
+                const regs = { ...state.registers };
+                Object.keys(regs).forEach(k => { if(regs[k] === null && k !== key) regs[k] = 0; });
+                const { n, i, PV, PMT, FV } = regs;
+
+                const i_dec = i / 100;
+
+                switch(key) {
+                    case 'FV': return rpn.unaryOp(() => -(PV * Math.pow(1 + i_dec, n) + PMT * (Math.pow(1 + i_dec, n) - 1) / i_dec));
+                    case 'PV': return rpn.unaryOp(() => -(FV / Math.pow(1 + i_dec, n) + PMT * (1 - Math.pow(1 + i_dec, -n)) / i_dec));
+                    case 'PMT': return rpn.unaryOp(() => -(PV * Math.pow(1 + i_dec, n) + FV) / ((Math.pow(1 + i_dec, n) - 1) / i_dec));
+                    case 'n': return rpn.unaryOp(() => Math.log(-(FV + PMT/i_dec)/(PV + PMT/i_dec)) / Math.log(1 + i_dec));
+                    case 'i': 
+                        const fn = (rate) => PV * Math.pow(1 + rate, n) + PMT * (Math.pow(1 + rate, n) - 1) / rate + FV;
+                        const dfn = (rate) => n * PV * Math.pow(1 + rate, n-1) + PMT * (n * rate * Math.pow(1+rate, n-1) - (Math.pow(1+rate, n)-1)) / (rate*rate);
+                        let rate = 0.05; // Initial guess
+                        for (let k=0; k < 20; k++) { // Newton-Raphson
+                            rate = rate - fn(rate) / dfn(rate);
+                        }
+                        return rpn.unaryOp(() => rate * 100);
+                }
             },
-            // Exemplo de uma função unária
-            '1/x': () => {
-                if (state.entering) input.enter();
-                const x = input.popFromStack();
-                input.pushToStack(1 / x);
-                display.update();
+            npv: () => {
+                if(state.isEntering) rpn.enter();
+                const rate = state.registers.i / 100;
+                let npv = state.cashFlows.length > 0 ? state.cashFlows[0].value : 0;
+                for(let j=1; j < state.cashFlows.length; j++) {
+                    npv += state.cashFlows[j].value / Math.pow(1 + rate, j);
+                }
+                rpn.push(npv);
             },
-            // Exemplo de uma função financeira
-            n: () => {
-                if (state.entering) {
-                    state.registers.n = parseFloat(state.inputBuffer);
-                    state.entering = false;
+            irr: () => {
+                if(state.isEntering) rpn.enter();
+                let rate = 0.1; // Initial guess
+                for(let i=0; i < 50; i++) { // Newton-Raphson for IRR
+                    let f_x = 0; let df_x = 0;
+                    for(let j=0; j < state.cashFlows.length; j++) {
+                        f_x += state.cashFlows[j].value / Math.pow(1+rate, j);
+                        if (j > 0) df_x -= j * state.cashFlows[j].value / Math.pow(1+rate, j+1);
+                    }
+                    if (Math.abs(df_x) < 1e-7) break;
+                    const new_rate = rate - f_x / df_x;
+                    if (Math.abs(new_rate - rate) < 1e-7) break;
+                    rate = new_rate;
+                }
+                rpn.push(rate * 100);
+            },
+            amortize: () => {
+                // ... implementation for AMORT
+                display.flashError("AMORT N/I");
+            }
+        };
+
+        const handle = {
+            key: (key, gKey) => {
+                if (state.prefix) {
+                    const func = state.prefix === 'f' ? key : gKey;
+                    handle.func(func);
+                    state.prefix = null;
                 } else {
-                    // Lógica de cálculo de 'n'
-                    // const result = engine.solveTVM('n', state.registers);
-                    // input.pushToStack(result);
+                    handle.func(key);
+                }
+                display.update();
+                display.updateContext();
+            },
+            number: (digit) => {
+                if (!state.isEntering) {
+                    rpn.push(state.stack[0]);
+                    state.inputBuffer = '0';
+                    state.isEntering = true;
+                }
+                if (state.inputBuffer.length > 12) return;
+                if (digit === '.' && state.inputBuffer.includes(',')) return;
+                
+                if (state.inputBuffer === '0' && digit !== '.') state.inputBuffer = '';
+                state.inputBuffer += (digit === '.' ? ',' : digit);
+            },
+            func: (key) => {
+                const numericKeys = "0123456789.";
+                if (numericKeys.includes(key)) {
+                    handle.number(key);
+                    return;
+                }
+                
+                state.isEntering = false;
+
+                switch (key) {
+                    case 'Enter': rpn.enter(); break;
+                    case 'CHS':
+                        if(state.isEntering) state.inputBuffer = String(-parseFloat(state.inputBuffer.replace(',','.'))).replace('.',',');
+                        else rpn.unaryOp(x => -x);
+                        break;
+                    case 'CLx': state.inputBuffer = '0'; state.isEntering = true; break;
+                    case 'AC': resetState(); break;
+                    
+                    case '+': rpn.binaryOp((x, y) => x + y); break;
+                    case '-': rpn.binaryOp((x, y) => y - x); break;
+                    case '*': rpn.binaryOp((x, y) => x * y); break;
+                    case '/': rpn.binaryOp((x, y) => y / x); break;
+                    case 'yx': rpn.binaryOp((x, y) => Math.pow(y, x)); break;
+                    case '1/x': rpn.unaryOp(x => 1 / x); break;
+                    
+                    case 'n': case 'i': case 'PV': case 'PMT': case 'FV':
+                        if (state.isEntering) {
+                            rpn.enter();
+                            state.registers[key] = state.stack[0];
+                        } else {
+                            engine.tvm(key);
+                        }
+                        break;
+                    
+                    case 'NPV': engine.npv(); break;
+                    case 'IRR': engine.irr(); break;
+
+                    case 'f': case 'g': state.prefix = key; break;
+                    
+                    case 'STO': case 'RCL': state.prefix = key; break;
+
+                    default: display.flashError("N/I");
                 }
             }
         };
-        
-        // --- TUTORIAL ---
+
         const tutorial = {
             currentStep: 0,
             steps: [
-                {
-                    title: "Bem-vindo à Calculadora Pro!",
-                    content: "<p>Este é um tour rápido. Esta calculadora usa <strong>Notação Polonesa Reversa (RPN)</strong>, que é poderosa e rápida quando você se acostuma.</p>"
-                },
-                {
-                    title: "Lógica RPN: A Pilha",
-                    content: "<p>Em vez de `2 + 3 =`, você digita `2`, `ENTER`, `3`, `+`. O `ENTER` separa os números. O operador age sobre os últimos números inseridos.</p> <p><strong>Exemplo:</strong> Para calcular (5+3)*2, faça: `5 ENTER 3 + 2 *`</p>"
-                },
-                {
-                    title: "Funções Financeiras (TVM)",
-                    content: "<p>Para calcular juros (i), por exemplo: <br>1. Digite o valor de N e pressione `n`. <br>2. Digite o valor de PV e pressione `PV`. <br>3. Digite o valor de PMT e pressione `PMT`. <br>4. Pressione `i` para calcular o resultado.</p>"
-                },
-                {
-                    title: "Funções `f` e `g`",
-                    content: "<p>Pressione `f` (laranja) ou `g` (azul) para ativar as funções secundárias dos botões. Um indicador aparecerá no topo do display.</p>"
-                },
-                {
-                    title: "Tudo Pronto!",
-                    content: "<p>Você pode rever este tutorial a qualquer momento clicando no ícone `?` no canto do display. Aproveite!</p>"
-                }
+                { title: "Bem-vindo à Calculadora Pro!", content: "<p>Este é um tour rápido. Esta calculadora usa <strong>Notação Polonesa Reversa (RPN)</strong>, que é poderosa e rápida quando você se acostuma.</p>" },
+                { title: "Lógica RPN: A Pilha", content: "<p>Em vez de `2 + 3 =`, você digita `2`, `ENTER`, `3`, `+`. O `ENTER` separa os números. O operador age sobre os últimos números inseridos.</p> <p><strong>Exemplo:</strong> Para calcular (5+3)*2, faça: `5 ENTER 3 + 2 *`</p>" },
+                { title: "Funções Financeiras (TVM)", content: "<p>Para calcular juros (i), por exemplo: <br>1. Digite o valor de N e pressione `n`. <br>2. Digite o valor de PV e pressione `PV`. <br>3. Digite o valor de PMT e pressione `PMT`. <br>4. Pressione `i` para calcular o resultado.</p>" },
+                { title: "Funções `f` e `g`", content: "<p>Pressione `f` (laranja) ou `g` (azul) para ativar as funções secundárias dos botões. Um indicador aparecerá no topo do display.</p>" },
+                { title: "Tudo Pronto!", content: "<p>Você pode rever este tutorial a qualquer momento clicando no ícone `?` no canto do display. Aproveite!</p>" }
             ],
             init: function() {
                 dom.helpBtn.addEventListener('click', () => this.start());
-                if (!localStorage.getItem('tutorialSeen')) {
-                    this.start();
-                }
+                if (!localStorage.getItem('FinanceProTutorialSeen')) { this.start(); }
             },
-            start: function() {
-                this.currentStep = 0;
-                this.render();
-                dom.tutorialModal.classList.add('visible');
-            },
+            start: function() { this.currentStep = 0; this.render(); dom.tutorialModal.classList.add('visible'); },
             render: function() {
                 const step = this.steps[this.currentStep];
-                dom.tutorialContent.innerHTML = `
-                    <h2>${step.title}</h2>
-                    ${step.content}
-                    <div class="modal-nav">
-                        <button class="modal-btn" id="tutorial-prev" ${this.currentStep === 0 ? 'disabled' : ''}>Anterior</button>
-                        <button class="modal-btn" id="tutorial-skip">Pular</button>
-                        <button class="modal-btn btn-primary" id="tutorial-next">${this.currentStep === this.steps.length - 1 ? 'Concluir' : 'Próximo'}</button>
-                    </div>`;
+                dom.tutorialContent.innerHTML = `<h2>${step.title}</h2>${step.content}<div class="modal-nav"><button class="modal-btn" id="tutorial-prev" ${this.currentStep === 0 ? 'disabled' : ''}>Anterior</button><button class="modal-btn" id="tutorial-skip">Pular</button><button class="modal-btn btn-primary" id="tutorial-next">${this.currentStep === this.steps.length - 1 ? 'Concluir' : 'Próximo'}</button></div>`;
                 document.getElementById('tutorial-next').onclick = () => this.next();
                 document.getElementById('tutorial-prev').onclick = () => this.prev();
                 document.getElementById('tutorial-skip').onclick = () => this.skip();
             },
-            next: function() {
-                if (this.currentStep < this.steps.length - 1) {
-                    this.currentStep++;
-                    this.render();
-                } else {
-                    this.skip();
-                }
+            next: function() { if (this.currentStep < this.steps.length - 1) { this.currentStep++; this.render(); } else { this.skip(); } },
+            prev: function() { if (this.currentStep > 0) { this.currentStep--; this.render(); } },
+            skip: function() { dom.tutorialModal.classList.remove('visible'); localStorage.setItem('FinanceProTutorialSeen', 'true'); }
+        };
+        
+        const cfInterface = {
+            init: () => {
+                dom.cfAddBtn.addEventListener('click', cfInterface.add);
+                dom.cfClearBtn.addEventListener('click', cfInterface.clear);
+                dom.cfDoneBtn.addEventListener('click', cfInterface.close);
             },
-            prev: function() {
-                if (this.currentStep > 0) {
-                    this.currentStep--;
-                    this.render();
-                }
+            open: () => { cfInterface.render(); dom.cfModal.classList.add('visible'); },
+            close: () => dom.cfModal.classList.remove('visible'),
+            add: () => {
+                const value = parseFloat(dom.cfInput.value);
+                if(isNaN(value)) return;
+                state.cashFlows.push({value});
+                dom.cfInput.value = '';
+                cfInterface.render();
             },
-            skip: function() {
-                dom.tutorialModal.classList.remove('visible');
-                localStorage.setItem('tutorialSeen', 'true');
+            clear: () => { state.cashFlows = []; cfInterface.render(); },
+            render: () => {
+                dom.cfList.innerHTML = state.cashFlows.map((cf, i) => `<div class="cf-item"><span>CF${i}:</span><span>${cf.value.toLocaleString('pt-BR')}</span></div>`).join('');
             }
         };
 
-        // --- INICIALIZAÇÃO ---
-        const init = () => {
+        const initApp = () => {
             resetState();
             display.update();
             display.updateContext();
             tutorial.init();
+            cfInterface.init();
             
-            // Adicionar todos os event listeners
             dom.buttons.forEach(button => {
                 button.addEventListener('click', () => {
                     const key = button.dataset.key;
-                    // Chamar a função correspondente
+                    const gKey = button.dataset.gKey;
+                    handle.key(key, gKey);
                 });
             });
 
-            // Lógica do Theme Toggle
             dom.themeToggle.addEventListener('change', () => {
                 document.body.classList.toggle('dark-mode');
-                const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-                localStorage.setItem('calculatorTheme', theme);
+                localStorage.setItem('FinanceProTheme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
             });
 
-            const savedTheme = localStorage.getItem('calculatorTheme');
-            if (savedTheme === 'dark') {
+            if (localStorage.getItem('FinanceProTheme') === 'dark') {
                 document.body.classList.add('dark-mode');
                 dom.themeToggle.checked = true;
             }
         };
 
-        // Inicia a aplicação
-        init();
+        initApp();
     });
     </script>
 </body>
